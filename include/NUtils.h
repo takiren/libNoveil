@@ -5,6 +5,7 @@ static UUIDv4::UUIDGenerator<std::mt19937_64> NUUIDGen;
 using NUUID = UUIDv4::UUID;
 
 //これを継承してuidを作ろう！
+/*!これを継承するだけでインスタンスにuidが生成される*/
 class INUid {
  private:
   NUUID uid;

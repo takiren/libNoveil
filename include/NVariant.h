@@ -19,6 +19,10 @@ using PackedVariant = std::vector<Variant>;
 template <typename KEY, typename DATA>
 using hash_map = std::unordered_map<KEY, DATA>;
 
+/*
+* std::variantのラッパークラス
+* @note コピー可能
+*/
 class Variant {
  private:
   using CustomVariant = void*;
@@ -30,8 +34,6 @@ class Variant {
  public:
   explicit Variant() = default;
   virtual ~Variant() = default;
-  Variant(const Variant&) = delete;
-  
 
   Variant& operator=(const Variant& rhs) { this->variable = rhs.variable;
   }
@@ -65,12 +67,5 @@ class Variant {
   // CAUTION:It returns a copy of variable which type is std::variant.
   RawVariant GetRowVariant() { return variable; }
 };
-
-template <>
-inline int Variant::Get<int>() {
-  // Assert when variable not held.
-  assert(std::holds_alternative<int>(variable));
-  return std::get<int>(variable);
-}
 
 }  // namespace noveil

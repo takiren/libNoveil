@@ -1,4 +1,12 @@
 #pragma once
+/**
+ * @file NGraph.h
+ * @brief グラフ実装
+ * @author takiren
+ *
+ */
+
+#include <functional>
 #include <memory>
 #include <queue>
 
@@ -31,10 +39,14 @@ using ParentRef = std::weak_ptr<T>;
 template <typename T>
 using ChildRef = std::weak_ptr<T>;
 
+/*!インプットピンのデータ送信元*/
 using SourcePinRef = std::weak_ptr<NNodePinOutput>;
-using TargetPinRef = std::weak_ptr<NNodePinInput>;
 
-// ピンのコンテナ
+/*!アウトプットピンのデータ送信先*/
+using TargetPinRef = std::weak_ptr<NNodePinInput>;
+using PackedTargetPinRef = std::vector<TargetPinRef>;
+
+/**グラフの頂点となる*/
 class NNodeBase : public INUid, private Noncopyable {
  private:
  protected:
@@ -46,12 +58,17 @@ class NNodeBase : public INUid, private Noncopyable {
   virtual ~NNodeBase() = default;
 };
 
+/**多分いらない*/
 class NNodeTemplate : public NNodeBase {
  public:
   explicit NNodeTemplate() : NNodeBase(){};
   virtual ~NNodeTemplate() = default;
 };
 
+/**
+ *ノードを管理するための基底クラス。
+ *
+ */
 class NGraphBase : public INUid, private Noncopyable {
  private:
  public:
@@ -72,34 +89,57 @@ class NEventBase {
   void DoAction(){};
 };
 
+/**
+ * ノードの値入出力に必要なオブジェクト:=ピンの基底クラス。
+ */
 class NNodePinBase : public INUid, private Noncopyable {
  private:
+  /** std::variantのラッパークラス*/
   Variant mValue;
+
+  /**
+   * ピンを保持するNNodeBaseの参照
+   */
   using ParentNodeRef = ParentRef<NNodeBase>;
+
+  /*!ピンを保持するNNodeBaseの参照*/
   ParentNodeRef parentNode;
 
  protected:
+  std::function<Variant()> sourceFunc;
   std::vector<std::string> allowedList;
 
  public:
   explicit NNodePinBase() : INUid(){};
   virtual ~NNodePinBase() = default;
+
+  void SetFunctor(std::function<Variant(void)>& rhs){
+      sourceFunc
+  };
+
+  virtual Variant& Get(){};
 };
 
 class NNodePinInput : public NNodePinBase {
  protected:
+  using PackedSourcePinRef = std::vector<SourcePinRef>;
   SourcePinRef sourcePin;
 
  public:
   NNodePinInput() : NNodePinBase(){};
   NNodePinInput(SourcePinRef source) : NNodePinBase(), sourcePin(source){};
   virtual ~NNodePinInput() = default;
-
-  Variant& GetData() { return Variant(); }
+  Variant& GetData() {
+    assert(sourcePin.expired());
+    return sourcePin.lock().get()->Calculate();
+  }
 };
-
+/**
+ * データ出力用のピン
+ */
 class NNodePinOutput : public NNodePinBase {
  protected:
+  /*!値の出力先のピン*/
   TargetPinRef targetPin;
 
  public:
@@ -134,7 +174,7 @@ class NNodeExecutionTest1 : public NNodeBase {
     pinOutput.emplace_back(opin);
   }
 
-  Variant func() { return pinOutput.front().lock()->Calculate(); }
+  Variant func() { return pinInput.front().lock()->GetData(); }
   virtual ~NNodeExecutionTest1() = default;
 };
 

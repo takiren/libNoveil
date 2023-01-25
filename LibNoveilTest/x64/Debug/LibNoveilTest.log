@@ -1,2 +1,12 @@
 ﻿  test.cpp
-  LibNoveilTest.vcxproj -> C:\Users\taki\source\repos\takiren\libNoveil\build\x64\Debug\LibNoveilTest.exe
+C:\Users\taki\source\repos\takiren\libNoveil\LibNoveilTest\test.cpp(4,23): error C2871: 'noveil': この名前を指定された名前空間は存在しません。
+C:\Users\taki\source\repos\takiren\libNoveil\LibNoveilTest\test.cpp(8,3): error C2065: 'NNodeExecutionTest1': 定義されていない識別子です。
+C:\Users\taki\source\repos\takiren\libNoveil\LibNoveilTest\test.cpp(8,23): error C2146: 構文エラー: ';' が、識別子 't1' の前に必要です。
+C:\Users\taki\source\repos\takiren\libNoveil\LibNoveilTest\test.cpp(8,23): error C2065: 't1': 定義されていない識別子です。
+C:\Users\taki\source\repos\takiren\libNoveil\LibNoveilTest\test.cpp(9,12): error C2065: 't1': 定義されていない識別子です。
+C:\Users\taki\source\repos\takiren\libNoveil\LibNoveilTest\test.cpp(10,3): error C3536: 'r': 初期化前に使用することはできません
+C:\Users\taki\source\repos\takiren\libNoveil\LibNoveilTest\test.cpp(10,3): error C2059: 構文エラー: ')'
+C:\Users\taki\source\repos\takiren\libNoveil\LibNoveilTest\test.cpp(10,3): error C2181: else 文が if と一致しません。
+C:\Users\taki\source\repos\takiren\libNoveil\LibNoveilTest\test.cpp(10,3): error C2065: 'gtest_ar': 定義されていない識別子です。
+C:\Users\taki\source\repos\takiren\libNoveil\LibNoveilTest\test.cpp(10,3): error C2440: '<function-style-cast>': 'initializer list' から 'testing::internal::AssertHelper' に変換できません。
+C:\Users\taki\source\repos\takiren\libNoveil\LibNoveilTest\test.cpp(10,3): message : コンストラクターはソース型を持てません、またはコンストラクターのオーバーロードの解決があいまいです。
