@@ -1,16 +1,14 @@
 cmake_minimum_required(VERSION 3.22)
 project(LibNoveil VERSION 0.1.0 LANGUAGES CXX)
 
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+
 set(LibNoveil_PATH ${CMAKE_CURRENT_SOURCE_DIR})
-set(LibNOVEIL_TARGET_BASE_DIR "${LibNoveil_PATH}")
 
 set(EXT_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external)
 
 add_definitions(-D_UNICODE)
-
-add_subdirectory(${EXT_LIB_DIR}/SDL)
-add_subdirectory(${EXT_LIB_DIR}/quill)
-add_subdirectory(${EXT_LIB_DIR}/uuid_v4)
 
 if(CMAKE_SYSTEM_NAME MATCHES "Windows")
     set(LibNOVEIL_TARGET "win")
@@ -39,8 +37,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${LibNOVEIL_TARGET_BASE_DIR}/$<IF:$<CONFIG:De
 # ----------------------------------------
 list(APPEND LibNoveil_INC_DIR
     ${EXT_LIB_DIR}/SDL/include
-    ${LibNoveil_PATH}/include
     ${EXT_LIB_DIR}/quill
+    ${EXT_LIB_DIR}/uuid_v4
+    include
 )
 
 file(GLOB_RECURSE SOURCE_LIST CONFIGURE_DEPENDS "include/*.h" "src/*.cpp")
@@ -52,6 +51,8 @@ set(CMAKE_BUILD_TYPE $<IF:$<CONFIG:Debug>,Debug, Release)
 
 add_library(NEngine STATIC ${SOURCE_LIST})
 
+message("Changed.")
+
 target_include_directories(NEngine PUBLIC ${LibNoveil_INC_DIR})
 
 target_link_options(NEngine PRIVATE $<$<CONFIG:Debug>:/Debug>)
@@ -59,5 +60,3 @@ target_link_options(NEngine PRIVATE $<$<CONFIG:Debug>:/Debug>)
 target_compile_options(NEngine PRIVATE -Wall -MP)
 
 target_compile_features(NEngine PUBLIC cxx_std_17)
-
-target_link_libraries(NEngine PUBLIC )

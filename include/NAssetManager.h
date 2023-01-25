@@ -1,12 +1,12 @@
 #pragma once
 
 #include"NMemory.h"
+#include"NVariant.h"
 #include"NAsset.h"
 #include<string>
 namespace noveil {
 class NAssetManagerTmplBase {
  protected:
-  hash_map<std::string, NAssetBase> contents;
 };
 
 class NAssetManagerTmpl : public NAssetManagerTmplBase {
