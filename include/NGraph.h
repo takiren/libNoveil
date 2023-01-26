@@ -98,6 +98,7 @@ class NNodeTemplate : public NNodeBase {
  *ノードを管理するための基底クラス。
  *
  */
+
 class NGraphBase : public INInfo, private Noncopyable {
  private:
  public:
