@@ -6,13 +6,18 @@ using NUUID = UUIDv4::UUID;
 
 //これを継承してuidを作ろう！
 /*!これを継承するだけでインスタンスにuidが生成される*/
-class INUid {
+class INInfo {
  private:
   NUUID uid;
+  std::string name;
+  std::string description;
  public:
-  explicit INUid() : uid(NUUIDGen.getUUID()){};
-  virtual ~INUid() = default;
+  explicit INInfo() : uid(NUUIDGen.getUUID()),name(""){};
+  virtual ~INInfo() = default;
   NUUID GetUID() const { return uid; }
+  void SetName(const std::string& rhs) { this->name = rhs; }
+  std::string GetName() const { return name; }
+
 };
 
 class Noncopyable {
@@ -22,4 +27,5 @@ class Noncopyable {
   Noncopyable(Noncopyable&) = delete;
   Noncopyable& operator=(const Noncopyable&) = delete;
 };
+
 }  // namespace noveil

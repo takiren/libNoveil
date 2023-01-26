@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <cassert>
 #include <map>
@@ -20,9 +20,10 @@ template <typename KEY, typename DATA>
 using hash_map = std::unordered_map<KEY, DATA>;
 
 /*
-* std::variant�̃��b�p�[�N���X
-* @note �R�s�[�\
-*/
+ * std::variantのラッパークラス
+ * @note void*にキャストするだけでもいい気がする。
+ */
+
 class Variant {
  private:
   using CustomVariant = void*;
@@ -35,10 +36,9 @@ class Variant {
   explicit Variant() = default;
   virtual ~Variant() = default;
 
-  Variant& operator=(const Variant& rhs) { this->variable = rhs.variable;
-  }
+  Variant& operator=(const Variant& rhs) { this->variable = rhs.variable; }
 
-  template<typename T>
+  template <typename T>
   Variant(const T& rhs) {
     this->variable = rhs;
   }

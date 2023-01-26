@@ -1,0 +1,26 @@
+\hypertarget{_n_asset_manager_8h_source}{}\doxysection{NAsset\+Manager.\+h}
+\label{_n_asset_manager_8h_source}\index{C:/Users/taki/source/repos/takiren/libNoveil/include/NAssetManager.h@{C:/Users/taki/source/repos/takiren/libNoveil/include/NAssetManager.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#pragma once}}
+\DoxyCodeLine{2 }
+\DoxyCodeLine{3 \textcolor{preprocessor}{\#include"{}NMemory.h"{}}}
+\DoxyCodeLine{4 \textcolor{preprocessor}{\#include"{}NVariant.h"{}}}
+\DoxyCodeLine{5 \textcolor{preprocessor}{\#include"{}NAsset.h"{}}}
+\DoxyCodeLine{6 \textcolor{preprocessor}{\#include<string>}}
+\DoxyCodeLine{7 \textcolor{keyword}{namespace }noveil \{}
+\DoxyCodeLine{8 \textcolor{keyword}{class }\mbox{\hyperlink{classnoveil_1_1_n_asset_manager_tmpl_base}{NAssetManagerTmplBase}} \{}
+\DoxyCodeLine{9  \textcolor{keyword}{protected}:}
+\DoxyCodeLine{10 \};}
+\DoxyCodeLine{11 }
+\DoxyCodeLine{12 \textcolor{keyword}{class }\mbox{\hyperlink{classnoveil_1_1_n_asset_manager_tmpl}{NAssetManagerTmpl}} : \textcolor{keyword}{public} \mbox{\hyperlink{classnoveil_1_1_n_asset_manager_tmpl_base}{NAssetManagerTmplBase}} \{}
+\DoxyCodeLine{13  \textcolor{keyword}{public}:}
+\DoxyCodeLine{14   \textcolor{keyword}{template} <\textcolor{keyword}{typename} T>}
+\DoxyCodeLine{15   \textcolor{keyword}{inline} T \&Get() \{}
+\DoxyCodeLine{16     \textcolor{keywordflow}{return} \textcolor{keyword}{static\_cast<}T\textcolor{keyword}{>}();}
+\DoxyCodeLine{17   \}}
+\DoxyCodeLine{18 \};}
+\DoxyCodeLine{19 }
+\DoxyCodeLine{20 \}  \textcolor{comment}{// namespace noveil}}
+
+\end{DoxyCode}

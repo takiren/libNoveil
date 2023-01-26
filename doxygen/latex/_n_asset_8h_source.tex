@@ -1,0 +1,38 @@
+\hypertarget{_n_asset_8h_source}{}\doxysection{NAsset.\+h}
+\label{_n_asset_8h_source}\index{C:/Users/taki/source/repos/takiren/libNoveil/include/NAsset.h@{C:/Users/taki/source/repos/takiren/libNoveil/include/NAsset.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#pragma once}}
+\DoxyCodeLine{2 }
+\DoxyCodeLine{3 \textcolor{preprocessor}{\#include <filesystem>}}
+\DoxyCodeLine{4 \textcolor{preprocessor}{\#include <string>}}
+\DoxyCodeLine{5 \textcolor{keyword}{namespace }noveil \{}
+\DoxyCodeLine{6 \textcolor{keyword}{class }NAssetBase;}
+\DoxyCodeLine{7 \textcolor{keyword}{class }NAssetConverter;}
+\DoxyCodeLine{8 }
+\DoxyCodeLine{9 \textcolor{keyword}{class }\mbox{\hyperlink{classnoveil_1_1_n_asset_converter}{NAssetConverter}} \{}
+\DoxyCodeLine{10  \textcolor{keyword}{private}:}
+\DoxyCodeLine{11  \textcolor{keyword}{public}:}
+\DoxyCodeLine{12   \mbox{\hyperlink{classnoveil_1_1_n_asset_converter}{NAssetConverter}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{13 \};}
+\DoxyCodeLine{14 }
+\DoxyCodeLine{15 \textcolor{keyword}{class }\mbox{\hyperlink{classnoveil_1_1_n_asset_base}{NAssetBase}} \{}
+\DoxyCodeLine{16  \textcolor{keyword}{public}:}
+\DoxyCodeLine{17   \mbox{\hyperlink{classnoveil_1_1_n_asset_base}{NAssetBase}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{18   \textcolor{keyword}{virtual} \mbox{\hyperlink{classnoveil_1_1_n_asset_base}{\string~NAssetBase}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{19 \};}
+\DoxyCodeLine{20 }
+\DoxyCodeLine{21 \textcolor{keyword}{class }\mbox{\hyperlink{classnoveil_1_1_n_asset_image}{NAssetImage}} \{}
+\DoxyCodeLine{22  \textcolor{keyword}{private}:}
+\DoxyCodeLine{23   \textcolor{keyword}{using }Filepath = std::filesystem::path;}
+\DoxyCodeLine{24 }
+\DoxyCodeLine{25   \textcolor{comment}{//Path to file(like a.png, b.jpg, c.csv,...)}}
+\DoxyCodeLine{26   Filepath fpath;}
+\DoxyCodeLine{27 }
+\DoxyCodeLine{28  \textcolor{keyword}{public}:}
+\DoxyCodeLine{29   \mbox{\hyperlink{classnoveil_1_1_n_asset_image}{NAssetImage}}(Filepath path);}
+\DoxyCodeLine{30   \textcolor{keyword}{virtual} \mbox{\hyperlink{classnoveil_1_1_n_asset_image}{\string~NAssetImage}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{31 \};}
+\DoxyCodeLine{32 \}  \textcolor{comment}{// namespace noveil}}
+
+\end{DoxyCode}

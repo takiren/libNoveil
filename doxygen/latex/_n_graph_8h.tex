@@ -1,0 +1,87 @@
+\hypertarget{_n_graph_8h}{}\doxysection{C\+:/\+Users/taki/source/repos/takiren/lib\+Noveil/include/\+NGraph.h File Reference}
+\label{_n_graph_8h}\index{C:/Users/taki/source/repos/takiren/libNoveil/include/NGraph.h@{C:/Users/taki/source/repos/takiren/libNoveil/include/NGraph.h}}
+
+
+É\+OÉâÉté¿ëï  
+
+
+{\ttfamily \#include $<$functional$>$}\newline
+{\ttfamily \#include $<$memory$>$}\newline
+{\ttfamily \#include $<$queue$>$}\newline
+{\ttfamily \#include \char`\"{}NUtils.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}NVariant.\+h\char`\"{}}\newline
+Include dependency graph for NGraph.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_n_graph_8h__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classnoveil_1_1_n_node_base}{noveil\+::\+NNode\+Base}}
+\item 
+class \mbox{\hyperlink{classnoveil_1_1_n_node_template}{noveil\+::\+NNode\+Template}}
+\item 
+class \mbox{\hyperlink{classnoveil_1_1_n_graph_base}{noveil\+::\+NGraph\+Base}}
+\item 
+class \mbox{\hyperlink{classnoveil_1_1_n_graph_template}{noveil\+::\+NGraph\+Template}}
+\item 
+class \mbox{\hyperlink{classnoveil_1_1_n_event_base}{noveil\+::\+NEvent\+Base}}
+\item 
+class \mbox{\hyperlink{classnoveil_1_1_n_node_pin_base}{noveil\+::\+NNode\+Pin\+Base}}
+\item 
+class \mbox{\hyperlink{classnoveil_1_1_n_node_pin_input}{noveil\+::\+NNode\+Pin\+Input}}
+\item 
+class \mbox{\hyperlink{classnoveil_1_1_n_node_pin_output}{noveil\+::\+NNode\+Pin\+Output}}
+\item 
+class \mbox{\hyperlink{classnoveil_1_1_n_node_pin_execution}{noveil\+::\+NNode\+Pin\+Execution}}
+\item 
+class \mbox{\hyperlink{classnoveil_1_1_n_node_execution_test1}{noveil\+::\+NNode\+Execution\+Test1}}
+\item 
+class \mbox{\hyperlink{classnoveil_1_1_n_event_impl}{noveil\+::\+NEvent\+Impl}}
+\item 
+class \mbox{\hyperlink{classnoveil_1_1_n_sequencer}{noveil\+::\+NSequencer}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{_n_graph_8h_ae21b2f168c9f2cf58cbff33184b2507c}\label{_n_graph_8h_ae21b2f168c9f2cf58cbff33184b2507c}} 
+{\footnotesize template$<$typename T $>$ }\\using {\bfseries noveil\+::\+Parent\+Ref} = std\+::weak\+\_\+ptr$<$ T $>$
+\item 
+\mbox{\Hypertarget{_n_graph_8h_a591a8d54eb2d03681f1c112cd6f433d1}\label{_n_graph_8h_a591a8d54eb2d03681f1c112cd6f433d1}} 
+{\footnotesize template$<$typename T $>$ }\\using {\bfseries noveil\+::\+Child\+Ref} = std\+::weak\+\_\+ptr$<$ T $>$
+\item 
+using \mbox{\hyperlink{_n_graph_8h_acae85e564d9151c91eec8b89044432b9}{noveil\+::\+Source\+Pin\+Ref}} = std\+::weak\+\_\+ptr$<$ NNode\+Pin\+Output $>$
+\item 
+using \mbox{\hyperlink{_n_graph_8h_ab918769e58da1a1cc98408f8c28b1c0a}{noveil\+::\+Target\+Pin\+Ref}} = std\+::weak\+\_\+ptr$<$ NNode\+Pin\+Input $>$
+\item 
+\mbox{\Hypertarget{_n_graph_8h_aa1832eded3353bfd05c2abe31de1aec4}\label{_n_graph_8h_aa1832eded3353bfd05c2abe31de1aec4}} 
+using {\bfseries noveil\+::\+Packed\+Target\+Pin\+Ref} = std\+::vector$<$ Target\+Pin\+Ref $>$
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+É\+OÉâÉté¿ëï 
+
+\begin{DoxyAuthor}{Author}
+takiren 
+\end{DoxyAuthor}
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{_n_graph_8h_acae85e564d9151c91eec8b89044432b9}\label{_n_graph_8h_acae85e564d9151c91eec8b89044432b9}} 
+\index{NGraph.h@{NGraph.h}!SourcePinRef@{SourcePinRef}}
+\index{SourcePinRef@{SourcePinRef}!NGraph.h@{NGraph.h}}
+\doxysubsubsection{\texorpdfstring{SourcePinRef}{SourcePinRef}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{_n_graph_8h_acae85e564d9151c91eec8b89044432b9}{noveil\+::\+Source\+Pin\+Ref}} = typedef std\+::weak\+\_\+ptr$<$NNode\+Pin\+Output$>$}
+
+É\+CÉìÉvÉbÉgÉsÉìÇÃÉfÅ\mbox{[}É$^\wedge$ëóê\+Må≥ \mbox{\Hypertarget{_n_graph_8h_ab918769e58da1a1cc98408f8c28b1c0a}\label{_n_graph_8h_ab918769e58da1a1cc98408f8c28b1c0a}} 
+\index{NGraph.h@{NGraph.h}!TargetPinRef@{TargetPinRef}}
+\index{TargetPinRef@{TargetPinRef}!NGraph.h@{NGraph.h}}
+\doxysubsubsection{\texorpdfstring{TargetPinRef}{TargetPinRef}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{_n_graph_8h_ab918769e58da1a1cc98408f8c28b1c0a}{noveil\+::\+Target\+Pin\+Ref}} = typedef std\+::weak\+\_\+ptr$<$NNode\+Pin\+Input$>$}
+
+É\+AÉ\+EÉgÉvÉbÉgÉsÉìÇÃÉfÅ\mbox{[}É$^\wedge$ëóê\+MêÊ 

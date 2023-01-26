@@ -1,7 +1,7 @@
-#pragma once
+ï»¿#pragma once
 /**
  * @file NGraph.h
- * @brief ƒOƒ‰ƒtÀ‘•
+ * @brief ã‚°ãƒ©ãƒ•å®Ÿè£…
  * @author takiren
  *
  */
@@ -15,17 +15,17 @@
 
 namespace noveil {
 
-// ƒOƒ‰ƒt
+// ã‚°ãƒ©ãƒ•
 class NGraphBase;
 
-// ’¸“_
+// é ‚ç‚¹
 class NNodeBase;
 
-// ƒCƒxƒ“ƒg
+// ã‚¤ãƒ™ãƒ³ãƒˆ
 class NEventBase;
 class NEventImpl;
 
-// ƒsƒ“
+// ãƒ”ãƒ³
 class NNodePinBase;
 class NNodePinInput;
 class NNodePinOutput;
@@ -33,32 +33,47 @@ class NNodePinExecution;
 // T
 class NNodeTemplate;
 
+/*
+ * å¼±å‚ç…§
+ */
 template <typename T>
 using ParentRef = std::weak_ptr<T>;
 
+/*
+ * å¼·å‚ç…§
+ */
 template <typename T>
-using ChildRef = std::weak_ptr<T>;
+using ChildRef = std::shared_ptr<T>;
 
-/*!ƒCƒ“ƒvƒbƒgƒsƒ“‚Ìƒf[ƒ^‘—MŒ³*/
+/*!ã‚¤ãƒ³ãƒ—ãƒƒãƒˆãƒ”ãƒ³ã®ãƒ‡ãƒ¼ã‚¿é€ä¿¡å…ƒ*/
 using SourcePinRef = std::weak_ptr<NNodePinOutput>;
 
-/*!ƒAƒEƒgƒvƒbƒgƒsƒ“‚Ìƒf[ƒ^‘—Mæ*/
+/*!ã‚¢ã‚¦ãƒˆãƒ—ãƒƒãƒˆãƒ”ãƒ³ã®ãƒ‡ãƒ¼ã‚¿é€ä¿¡å…ˆ*/
 using TargetPinRef = std::weak_ptr<NNodePinInput>;
 using PackedTargetPinRef = std::vector<TargetPinRef>;
 
-/**ƒOƒ‰ƒt‚Ì’¸“_‚Æ‚È‚é*/
-class NNodeBase : public INUid, private Noncopyable {
+using CallbackFunction = std::function<Variant(void)>;
+
+/**ã‚°ãƒ©ãƒ•ã®é ‚ç‚¹ã¨ãªã‚‹*/
+class NNodeBase : public INInfo, private Noncopyable {
  private:
+  bool bIsExecutionNode;
+
  protected:
   std::vector<ChildRef<NNodePinInput>> pinInput;
   std::vector<ChildRef<NNodePinOutput>> pinOutput;
 
  public:
-  explicit NNodeBase() : INUid(){};
+  explicit NNodeBase() : INInfo(), bIsExecutionNode(false){};
   virtual ~NNodeBase() = default;
+
+  virtual void AddInputNode(){};
+  virtual void AddOutputNode(){};
+
+  virtual void Execute(){};
 };
 
-/**‘½•ª‚¢‚ç‚È‚¢*/
+/**å¤šåˆ†ã„ã‚‰ãªã„*/
 class NNodeTemplate : public NNodeBase {
  public:
   explicit NNodeTemplate() : NNodeBase(){};
@@ -66,13 +81,13 @@ class NNodeTemplate : public NNodeBase {
 };
 
 /**
- *ƒm[ƒh‚ğŠÇ—‚·‚é‚½‚ß‚ÌŠî’êƒNƒ‰ƒXB
+ *ãƒãƒ¼ãƒ‰ã‚’ç®¡ç†ã™ã‚‹ãŸã‚ã®åŸºåº•ã‚¯ãƒ©ã‚¹ã€‚
  *
  */
-class NGraphBase : public INUid, private Noncopyable {
+class NGraphBase : public INInfo, private Noncopyable {
  private:
  public:
-  explicit NGraphBase() : INUid(){};
+  explicit NGraphBase() : INInfo(){};
   virtual ~NGraphBase() = default;
 };
 
@@ -90,56 +105,60 @@ class NEventBase {
 };
 
 /**
- * ƒm[ƒh‚Ì’l“üo—Í‚É•K—v‚ÈƒIƒuƒWƒFƒNƒg:=ƒsƒ“‚ÌŠî’êƒNƒ‰ƒXB
+ * ãƒãƒ¼ãƒ‰ã®å€¤å…¥å‡ºåŠ›ã«å¿…è¦ãªã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ:=ãƒ”ãƒ³ã®åŸºåº•ã‚¯ãƒ©ã‚¹ã€‚
  */
-class NNodePinBase : public INUid, private Noncopyable {
+class NNodePinBase : public INInfo, private Noncopyable {
  private:
-  /** std::variant‚Ìƒ‰ƒbƒp[ƒNƒ‰ƒX*/
+  /** std::variantã®ãƒ©ãƒƒãƒ‘ãƒ¼ã‚¯ãƒ©ã‚¹*/
   Variant mValue;
-
+  // TODO: Rename the valiable name to better one.
+  /*!ã“ã‚Œã«å—ã‘å–ã‚ŠãŸã„ãƒ‡ãƒ¼ã‚¿ã‚’è¿”ã™é–¢æ•°ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç™»éŒ²*/
+  CallbackFunction Get_val_call;
   /**
-   * ƒsƒ“‚ğ•Û‚·‚éNNodeBase‚ÌQÆ
+   * ãƒ”ãƒ³ã‚’ä¿æŒã™ã‚‹NNodeBaseã¸ã®å‚ç…§
    */
   using ParentNodeRef = ParentRef<NNodeBase>;
 
-  /*!ƒsƒ“‚ğ•Û‚·‚éNNodeBase‚ÌQÆ*/
+  /*!ãƒ”ãƒ³ã‚’ä¿æŒã™ã‚‹NNodeBaseã¸ã®å‚ç…§*/
   ParentNodeRef parentNode;
 
  protected:
-  std::function<Variant()> sourceFunc;
   std::vector<std::string> allowedList;
 
  public:
-  explicit NNodePinBase() : INUid(){};
+  explicit NNodePinBase() : INInfo(){};
   virtual ~NNodePinBase() = default;
 
-  void SetFunctor(std::function<Variant(void)>& rhs){
-      sourceFunc
+  /*!Binds a functor which type is std::function<Variant(void)>.*/
+  void Bind(const CallbackFunction&& rhs) { Get_val_call = rhs; };
+
+  /*!Binds like std::bind(&Hoge::fuga,std::ref(pointer))*/
+  template <class T, class F>
+  void Bind(T&& a, F&& boundObject) {
+    Get_val_call = std::bind(a, std::ref(boundObject));
   };
 
-  virtual Variant& Get(){};
+  Variant GetData() {
+    assert(Get_val_call);
+    return Get_val_call();
+  }
 };
 
 class NNodePinInput : public NNodePinBase {
  protected:
-  using PackedSourcePinRef = std::vector<SourcePinRef>;
-  SourcePinRef sourcePin;
-
  public:
   NNodePinInput() : NNodePinBase(){};
-  NNodePinInput(SourcePinRef source) : NNodePinBase(), sourcePin(source){};
   virtual ~NNodePinInput() = default;
-  Variant& GetData() {
-    assert(sourcePin.expired());
-    return sourcePin.lock().get()->Calculate();
-  }
 };
+
 /**
- * ƒf[ƒ^o—Í—p‚Ìƒsƒ“
+ * ãƒ‡ãƒ¼ã‚¿å‡ºåŠ›ç”¨ã®ãƒ”ãƒ³
  */
+
 class NNodePinOutput : public NNodePinBase {
  protected:
-  /*!’l‚Ìo—Íæ‚Ìƒsƒ“*/
+  // THINK:Needless?
+  /*!å€¤ã®å‡ºåŠ›å…ˆã®ãƒ”ãƒ³*/
   TargetPinRef targetPin;
 
  public:
@@ -167,15 +186,25 @@ class NNodeExecutionTest1 : public NNodeBase {
  protected:
  public:
   NNodeExecutionTest1() : NNodeBase() {
-    auto ipin = std::make_shared<NNodePinInput>();
-    auto* te = new NNodePinOutput();
-    auto opin = std::make_shared<NNodePinOutput>(ipin);
-    pinInput.emplace_back(ipin);
-    pinOutput.emplace_back(opin);
+    auto ipin = std::make_unique<NNodePinInput>();
+    auto opin = std::make_unique<NNodePinOutput>();
+
+    ipin->Bind(&NNodePinOutput::Calculate, opin);
+    pinInput.emplace_back(std::move(ipin));
+    pinOutput.emplace_back(std::move(opin));
   }
 
-  Variant func() { return pinInput.front().lock()->GetData(); }
+  Variant func() { return pinInput.front()->GetData(); }
   virtual ~NNodeExecutionTest1() = default;
+};
+
+
+class NNodeExecutor : public NNodeBase {
+ protected:
+ public:
+  NNodeExecutor() = default;
+  virtual ~NNodeExecutor() = default;
+
 };
 
 class NEventImpl : public NEventBase {

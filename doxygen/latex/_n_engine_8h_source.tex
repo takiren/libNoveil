@@ -1,0 +1,32 @@
+\hypertarget{_n_engine_8h_source}{}\doxysection{NEngine.\+h}
+\label{_n_engine_8h_source}\index{C:/Users/taki/source/repos/takiren/libNoveil/include/NEngine.h@{C:/Users/taki/source/repos/takiren/libNoveil/include/NEngine.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#include <SDL.h>}}
+\DoxyCodeLine{2 }
+\DoxyCodeLine{3 \textcolor{keyword}{namespace }noveil \{}
+\DoxyCodeLine{4 }
+\DoxyCodeLine{5 \textcolor{keyword}{class }\mbox{\hyperlink{classnoveil_1_1_n_engine}{NEngine}} \{}
+\DoxyCodeLine{6  \textcolor{keyword}{private}:}
+\DoxyCodeLine{7   SDL\_Window* windowRef;}
+\DoxyCodeLine{8   SDL\_Renderer* rendererRef;}
+\DoxyCodeLine{9 }
+\DoxyCodeLine{10   \textcolor{keywordtype}{int} position, dir;}
+\DoxyCodeLine{11 }
+\DoxyCodeLine{12  \textcolor{keyword}{public}:}
+\DoxyCodeLine{13   \mbox{\hyperlink{classnoveil_1_1_n_engine}{NEngine}}() = \textcolor{keyword}{delete};}
+\DoxyCodeLine{14   \textcolor{keyword}{explicit} \mbox{\hyperlink{classnoveil_1_1_n_engine}{NEngine}}(SDL\_Window* window, SDL\_Renderer* renderer);}
+\DoxyCodeLine{15   \textcolor{keyword}{explicit} \mbox{\hyperlink{classnoveil_1_1_n_engine}{NEngine}}(\textcolor{keywordtype}{void}* winId);}
+\DoxyCodeLine{16   \textcolor{keyword}{virtual} \mbox{\hyperlink{classnoveil_1_1_n_engine}{\string~NEngine}}();}
+\DoxyCodeLine{17 }
+\DoxyCodeLine{18   \textcolor{keywordtype}{void} SetWindow(\textcolor{keywordtype}{void}* winId);}
+\DoxyCodeLine{19 }
+\DoxyCodeLine{20   SDL\_Window* GetWindowRef() \{ \textcolor{keywordflow}{return} windowRef; \}}
+\DoxyCodeLine{21   SDL\_Renderer* GetRendererRef() \{ \textcolor{keywordflow}{return} rendererRef; \}}
+\DoxyCodeLine{22 }
+\DoxyCodeLine{23   \textcolor{keywordtype}{void} Render();}
+\DoxyCodeLine{24 \};}
+\DoxyCodeLine{25 }
+\DoxyCodeLine{26 \}  \textcolor{comment}{// namespace noveil}}
+
+\end{DoxyCode}

@@ -1,0 +1,174 @@
+\hypertarget{_n_graph_8h_source}{}\doxysection{NGraph.\+h}
+\label{_n_graph_8h_source}\index{C:/Users/taki/source/repos/takiren/libNoveil/include/NGraph.h@{C:/Users/taki/source/repos/takiren/libNoveil/include/NGraph.h}}
+\mbox{\hyperlink{_n_graph_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#pragma once}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#include <functional>}}
+\DoxyCodeLine{10 \textcolor{preprocessor}{\#include <memory>}}
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <queue>}}
+\DoxyCodeLine{12 }
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include "{}NUtils.h"{}}}
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#include "{}NVariant.h"{}}}
+\DoxyCodeLine{15 }
+\DoxyCodeLine{16 \textcolor{keyword}{namespace }noveil \{}
+\DoxyCodeLine{17 }
+\DoxyCodeLine{18 \textcolor{comment}{// グラフ}}
+\DoxyCodeLine{19 \textcolor{keyword}{class }NGraphBase;}
+\DoxyCodeLine{20 }
+\DoxyCodeLine{21 \textcolor{comment}{// 頂貼_}}
+\DoxyCodeLine{22 \textcolor{keyword}{class }NNodeBase;}
+\DoxyCodeLine{23 }
+\DoxyCodeLine{24 \textcolor{comment}{// イベント}}
+\DoxyCodeLine{25 \textcolor{keyword}{class }NEventBase;}
+\DoxyCodeLine{26 \textcolor{keyword}{class }NEventImpl;}
+\DoxyCodeLine{27 }
+\DoxyCodeLine{28 \textcolor{comment}{// ピン}}
+\DoxyCodeLine{29 \textcolor{keyword}{class }NNodePinBase;}
+\DoxyCodeLine{30 \textcolor{keyword}{class }NNodePinInput;}
+\DoxyCodeLine{31 \textcolor{keyword}{class }NNodePinOutput;}
+\DoxyCodeLine{32 \textcolor{keyword}{class }NNodePinExecution;}
+\DoxyCodeLine{33 \textcolor{comment}{// T}}
+\DoxyCodeLine{34 \textcolor{keyword}{class }NNodeTemplate;}
+\DoxyCodeLine{35 }
+\DoxyCodeLine{36 \textcolor{keyword}{template} <\textcolor{keyword}{typename} T>}
+\DoxyCodeLine{37 \textcolor{keyword}{using }ParentRef = std::weak\_ptr<T>;}
+\DoxyCodeLine{38 }
+\DoxyCodeLine{39 \textcolor{keyword}{template} <\textcolor{keyword}{typename} T>}
+\DoxyCodeLine{40 \textcolor{keyword}{using }ChildRef = std::weak\_ptr<T>;}
+\DoxyCodeLine{41 }
+\DoxyCodeLine{43 \textcolor{keyword}{using }\mbox{\hyperlink{_n_graph_8h_acae85e564d9151c91eec8b89044432b9}{SourcePinRef}} = std::weak\_ptr<NNodePinOutput>;}
+\DoxyCodeLine{44 }
+\DoxyCodeLine{46 \textcolor{keyword}{using }\mbox{\hyperlink{_n_graph_8h_ab918769e58da1a1cc98408f8c28b1c0a}{TargetPinRef}} = std::weak\_ptr<NNodePinInput>;}
+\DoxyCodeLine{47 \textcolor{keyword}{using }PackedTargetPinRef = std::vector<TargetPinRef>;}
+\DoxyCodeLine{48 }
+\DoxyCodeLine{50 \textcolor{keyword}{class }\mbox{\hyperlink{classnoveil_1_1_n_node_base}{NNodeBase}} : \textcolor{keyword}{public} \mbox{\hyperlink{classnoveil_1_1_i_n_info}{INInfo}}, \textcolor{keyword}{private} \mbox{\hyperlink{classnoveil_1_1_noncopyable}{Noncopyable}} \{}
+\DoxyCodeLine{51  \textcolor{keyword}{private}:}
+\DoxyCodeLine{52  \textcolor{keyword}{protected}:}
+\DoxyCodeLine{53   std::vector<ChildRef<NNodePinInput>> pinInput;}
+\DoxyCodeLine{54   std::vector<ChildRef<NNodePinOutput>> pinOutput;}
+\DoxyCodeLine{55 }
+\DoxyCodeLine{56  \textcolor{keyword}{public}:}
+\DoxyCodeLine{57   \textcolor{keyword}{explicit} \mbox{\hyperlink{classnoveil_1_1_n_node_base}{NNodeBase}}() : \mbox{\hyperlink{classnoveil_1_1_i_n_info}{INInfo}}()\{\};}
+\DoxyCodeLine{58   \textcolor{keyword}{virtual} \mbox{\hyperlink{classnoveil_1_1_n_node_base}{\string~NNodeBase}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{59 \};}
+\DoxyCodeLine{60 }
+\DoxyCodeLine{62 \textcolor{keyword}{class }\mbox{\hyperlink{classnoveil_1_1_n_node_template}{NNodeTemplate}} : \textcolor{keyword}{public} \mbox{\hyperlink{classnoveil_1_1_n_node_base}{NNodeBase}} \{}
+\DoxyCodeLine{63  \textcolor{keyword}{public}:}
+\DoxyCodeLine{64   \textcolor{keyword}{explicit} \mbox{\hyperlink{classnoveil_1_1_n_node_template}{NNodeTemplate}}() : \mbox{\hyperlink{classnoveil_1_1_n_node_base}{NNodeBase}}()\{\};}
+\DoxyCodeLine{65   \textcolor{keyword}{virtual} \mbox{\hyperlink{classnoveil_1_1_n_node_template}{\string~NNodeTemplate}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{66 \};}
+\DoxyCodeLine{67 }
+\DoxyCodeLine{72 \textcolor{keyword}{class }\mbox{\hyperlink{classnoveil_1_1_n_graph_base}{NGraphBase}} : \textcolor{keyword}{public} \mbox{\hyperlink{classnoveil_1_1_i_n_info}{INInfo}}, \textcolor{keyword}{private} \mbox{\hyperlink{classnoveil_1_1_noncopyable}{Noncopyable}} \{}
+\DoxyCodeLine{73  \textcolor{keyword}{private}:}
+\DoxyCodeLine{74  \textcolor{keyword}{public}:}
+\DoxyCodeLine{75   \textcolor{keyword}{explicit} \mbox{\hyperlink{classnoveil_1_1_n_graph_base}{NGraphBase}}() : \mbox{\hyperlink{classnoveil_1_1_i_n_info}{INInfo}}()\{\};}
+\DoxyCodeLine{76   \textcolor{keyword}{virtual} \mbox{\hyperlink{classnoveil_1_1_n_graph_base}{\string~NGraphBase}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{77 \};}
+\DoxyCodeLine{78 }
+\DoxyCodeLine{79 \textcolor{keyword}{class }\mbox{\hyperlink{classnoveil_1_1_n_graph_template}{NGraphTemplate}} : \textcolor{keyword}{public} \mbox{\hyperlink{classnoveil_1_1_n_graph_base}{NGraphBase}} \{}
+\DoxyCodeLine{80  \textcolor{keyword}{public}:}
+\DoxyCodeLine{81   \textcolor{keyword}{explicit} \mbox{\hyperlink{classnoveil_1_1_n_graph_template}{NGraphTemplate}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{82   \textcolor{keyword}{virtual} \mbox{\hyperlink{classnoveil_1_1_n_graph_template}{\string~NGraphTemplate}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{83 \};}
+\DoxyCodeLine{84 }
+\DoxyCodeLine{85 \textcolor{keyword}{class }\mbox{\hyperlink{classnoveil_1_1_n_event_base}{NEventBase}} \{}
+\DoxyCodeLine{86  \textcolor{keyword}{public}:}
+\DoxyCodeLine{87   \textcolor{keyword}{explicit} \mbox{\hyperlink{classnoveil_1_1_n_event_base}{NEventBase}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{88   \textcolor{keyword}{virtual} \mbox{\hyperlink{classnoveil_1_1_n_event_base}{\string~NEventBase}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{89   \textcolor{keywordtype}{void} DoAction()\{\};}
+\DoxyCodeLine{90 \};}
+\DoxyCodeLine{91 }
+\DoxyCodeLine{95 \textcolor{keyword}{class }\mbox{\hyperlink{classnoveil_1_1_n_node_pin_base}{NNodePinBase}} : \textcolor{keyword}{public} \mbox{\hyperlink{classnoveil_1_1_i_n_info}{INInfo}}, \textcolor{keyword}{private} \mbox{\hyperlink{classnoveil_1_1_noncopyable}{Noncopyable}} \{}
+\DoxyCodeLine{96  \textcolor{keyword}{private}:}
+\DoxyCodeLine{98   \mbox{\hyperlink{classnoveil_1_1_variant}{Variant}} mValue;}
+\DoxyCodeLine{99 }
+\DoxyCodeLine{103   \textcolor{keyword}{using }ParentNodeRef = ParentRef<NNodeBase>;}
+\DoxyCodeLine{104 }
+\DoxyCodeLine{106   ParentNodeRef parentNode;}
+\DoxyCodeLine{107 }
+\DoxyCodeLine{108  \textcolor{keyword}{protected}:}
+\DoxyCodeLine{109   std::vector<std::string> allowedList;}
+\DoxyCodeLine{110 }
+\DoxyCodeLine{111  \textcolor{keyword}{public}:}
+\DoxyCodeLine{112   \textcolor{keyword}{explicit} \mbox{\hyperlink{classnoveil_1_1_n_node_pin_base}{NNodePinBase}}() : \mbox{\hyperlink{classnoveil_1_1_i_n_info}{INInfo}}()\{\};}
+\DoxyCodeLine{113   \textcolor{keyword}{virtual} \mbox{\hyperlink{classnoveil_1_1_n_node_pin_base}{\string~NNodePinBase}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{114 }
+\DoxyCodeLine{115   \textcolor{keyword}{virtual} \mbox{\hyperlink{classnoveil_1_1_variant}{Variant}}\& Get()\{\};}
+\DoxyCodeLine{116 \};}
+\DoxyCodeLine{117 }
+\DoxyCodeLine{118 \textcolor{keyword}{class }\mbox{\hyperlink{classnoveil_1_1_n_node_pin_input}{NNodePinInput}} : \textcolor{keyword}{public} \mbox{\hyperlink{classnoveil_1_1_n_node_pin_base}{NNodePinBase}} \{}
+\DoxyCodeLine{119  \textcolor{keyword}{protected}:}
+\DoxyCodeLine{120   \textcolor{comment}{// TODO: Rename the valiable name to better one.}}
+\DoxyCodeLine{122 \textcolor{comment}{}  std::function<\mbox{\hyperlink{classnoveil_1_1_variant}{Variant}}(\textcolor{keywordtype}{void})> \mbox{\hyperlink{classnoveil_1_1_n_node_pin_input_a3593c0d40fcb7a580e0bfbd759094b5d}{Get\_val\_call}};}
+\DoxyCodeLine{123 }
+\DoxyCodeLine{124  \textcolor{keyword}{public}:}
+\DoxyCodeLine{125   \mbox{\hyperlink{classnoveil_1_1_n_node_pin_input}{NNodePinInput}}() : \mbox{\hyperlink{classnoveil_1_1_n_node_pin_base}{NNodePinBase}}()\{\};}
+\DoxyCodeLine{126   \mbox{\hyperlink{classnoveil_1_1_n_node_pin_input}{NNodePinInput}}(\mbox{\hyperlink{_n_graph_8h_acae85e564d9151c91eec8b89044432b9}{SourcePinRef}} source) : \mbox{\hyperlink{classnoveil_1_1_n_node_pin_base}{NNodePinBase}}()\{\};}
+\DoxyCodeLine{127   \textcolor{keyword}{virtual} \string~NNodePinInput() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{128 }
+\DoxyCodeLine{129   Variant\& GetData() \{}
+\DoxyCodeLine{130     assert(\mbox{\hyperlink{classnoveil_1_1_n_node_pin_input_a3593c0d40fcb7a580e0bfbd759094b5d}{Get\_val\_call}});}
+\DoxyCodeLine{131     \textcolor{keywordflow}{return} \mbox{\hyperlink{classnoveil_1_1_n_node_pin_input_a3593c0d40fcb7a580e0bfbd759094b5d}{Get\_val\_call}}();}
+\DoxyCodeLine{132   \}}
+\DoxyCodeLine{133 \};}
+\DoxyCodeLine{134 }
+\DoxyCodeLine{139 \textcolor{keyword}{class }\mbox{\hyperlink{classnoveil_1_1_n_node_pin_output}{NNodePinOutput}} : \textcolor{keyword}{public} \mbox{\hyperlink{classnoveil_1_1_n_node_pin_base}{NNodePinBase}} \{}
+\DoxyCodeLine{140  \textcolor{keyword}{protected}:}
+\DoxyCodeLine{141   \textcolor{comment}{// THINK:Needless?}}
+\DoxyCodeLine{143 \textcolor{comment}{}  \mbox{\hyperlink{_n_graph_8h_ab918769e58da1a1cc98408f8c28b1c0a}{TargetPinRef}} \mbox{\hyperlink{classnoveil_1_1_n_node_pin_output_a0f46665836e8f131468d19b05a2003f9}{targetPin}};}
+\DoxyCodeLine{144 }
+\DoxyCodeLine{145  \textcolor{keyword}{public}:}
+\DoxyCodeLine{146   \mbox{\hyperlink{classnoveil_1_1_n_node_pin_output}{NNodePinOutput}}() : \mbox{\hyperlink{classnoveil_1_1_n_node_pin_base}{NNodePinBase}}()\{\};}
+\DoxyCodeLine{147   \mbox{\hyperlink{classnoveil_1_1_n_node_pin_output}{NNodePinOutput}}(\mbox{\hyperlink{_n_graph_8h_ab918769e58da1a1cc98408f8c28b1c0a}{TargetPinRef}} target) : \mbox{\hyperlink{classnoveil_1_1_n_node_pin_base}{NNodePinBase}}(), \mbox{\hyperlink{classnoveil_1_1_n_node_pin_output_a0f46665836e8f131468d19b05a2003f9}{targetPin}}(target)\{\};}
+\DoxyCodeLine{148   \textcolor{keyword}{virtual} \string~NNodePinOutput() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{149   Variant Calculate() \{ \textcolor{keywordflow}{return} \textcolor{stringliteral}{"{}Success"{}}; \}}
+\DoxyCodeLine{150 \};}
+\DoxyCodeLine{151 }
+\DoxyCodeLine{152 \textcolor{keyword}{class }\mbox{\hyperlink{classnoveil_1_1_n_node_pin_execution}{NNodePinExecution}} : \textcolor{keyword}{public} \mbox{\hyperlink{classnoveil_1_1_n_node_pin_base}{NNodePinBase}} \{}
+\DoxyCodeLine{153  \textcolor{keyword}{private}:}
+\DoxyCodeLine{154   std::vector<NUUID> parents;}
+\DoxyCodeLine{155   NUUID target;}
+\DoxyCodeLine{156 }
+\DoxyCodeLine{157   \textcolor{keyword}{using }ParentNodeRef = ParentRef<NEventBase>;}
+\DoxyCodeLine{158   ParentNodeRef pnodeRef;}
+\DoxyCodeLine{159 }
+\DoxyCodeLine{160  \textcolor{keyword}{public}:}
+\DoxyCodeLine{161   \textcolor{keyword}{explicit} \mbox{\hyperlink{classnoveil_1_1_n_node_pin_execution}{NNodePinExecution}}() : \mbox{\hyperlink{classnoveil_1_1_n_node_pin_base}{NNodePinBase}}()\{\};}
+\DoxyCodeLine{162   \textcolor{keyword}{virtual} \mbox{\hyperlink{classnoveil_1_1_n_node_pin_execution}{\string~NNodePinExecution}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{163   \textcolor{keywordtype}{void} Triggered() \{ pnodeRef.lock()-\/>DoAction(); \};}
+\DoxyCodeLine{164 \};}
+\DoxyCodeLine{165 }
+\DoxyCodeLine{166 \textcolor{keyword}{class }\mbox{\hyperlink{classnoveil_1_1_n_node_execution_test1}{NNodeExecutionTest1}} : \textcolor{keyword}{public} \mbox{\hyperlink{classnoveil_1_1_n_node_base}{NNodeBase}} \{}
+\DoxyCodeLine{167  \textcolor{keyword}{protected}:}
+\DoxyCodeLine{168  \textcolor{keyword}{public}:}
+\DoxyCodeLine{169   \mbox{\hyperlink{classnoveil_1_1_n_node_execution_test1}{NNodeExecutionTest1}}() : \mbox{\hyperlink{classnoveil_1_1_n_node_base}{NNodeBase}}() \{}
+\DoxyCodeLine{170     \textcolor{keyword}{auto} ipin = std::make\_shared<NNodePinInput>();}
+\DoxyCodeLine{171     \textcolor{keyword}{auto}* te = \textcolor{keyword}{new} \mbox{\hyperlink{classnoveil_1_1_n_node_pin_output}{NNodePinOutput}}();}
+\DoxyCodeLine{172     \textcolor{keyword}{auto} opin = std::make\_shared<NNodePinOutput>(ipin);}
+\DoxyCodeLine{173     pinInput.emplace\_back(ipin);}
+\DoxyCodeLine{174     pinOutput.emplace\_back(opin);}
+\DoxyCodeLine{175   \}}
+\DoxyCodeLine{176 }
+\DoxyCodeLine{177   \mbox{\hyperlink{classnoveil_1_1_variant}{Variant}} func() \{ \textcolor{keywordflow}{return} pinInput.front().lock()-\/>GetData(); \}}
+\DoxyCodeLine{178   \textcolor{keyword}{virtual} \mbox{\hyperlink{classnoveil_1_1_n_node_execution_test1}{\string~NNodeExecutionTest1}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{179 \};}
+\DoxyCodeLine{180 }
+\DoxyCodeLine{181 \textcolor{keyword}{class }\mbox{\hyperlink{classnoveil_1_1_n_event_impl}{NEventImpl}} : \textcolor{keyword}{public} \mbox{\hyperlink{classnoveil_1_1_n_event_base}{NEventBase}} \{}
+\DoxyCodeLine{182  \textcolor{keyword}{private}:}
+\DoxyCodeLine{183  \textcolor{keyword}{protected}:}
+\DoxyCodeLine{184  \textcolor{keyword}{public}:}
+\DoxyCodeLine{185   \textcolor{keyword}{explicit} \mbox{\hyperlink{classnoveil_1_1_n_event_impl}{NEventImpl}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{186   \textcolor{keyword}{virtual} \mbox{\hyperlink{classnoveil_1_1_n_event_impl}{\string~NEventImpl}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{187 \};}
+\DoxyCodeLine{188 }
+\DoxyCodeLine{189 \textcolor{keyword}{class }\mbox{\hyperlink{classnoveil_1_1_n_sequencer}{NSequencer}} : \textcolor{keyword}{public} \mbox{\hyperlink{classnoveil_1_1_n_graph_base}{NGraphBase}} \{}
+\DoxyCodeLine{190  \textcolor{keyword}{private}:}
+\DoxyCodeLine{191  \textcolor{keyword}{protected}:}
+\DoxyCodeLine{192  \textcolor{keyword}{public}:}
+\DoxyCodeLine{193   \textcolor{keyword}{explicit} \mbox{\hyperlink{classnoveil_1_1_n_sequencer}{NSequencer}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{194   \textcolor{keyword}{virtual} \mbox{\hyperlink{classnoveil_1_1_n_sequencer}{\string~NSequencer}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{195 \};}
+\DoxyCodeLine{196 }
+\DoxyCodeLine{197 \}  \textcolor{comment}{// namespace noveil}}
+
+\end{DoxyCode}
