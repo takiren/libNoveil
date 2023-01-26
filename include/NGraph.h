@@ -17,9 +17,12 @@ namespace noveil {
 
 // グラフ
 class NGraphBase;
+class NSequencer;
 
 // 頂点
 class NNodeBase;
+class NNodeAuxiliary;
+class NNodeExecutor;
 
 // イベント
 class NEventBase;
@@ -29,7 +32,8 @@ class NEventImpl;
 class NNodePinBase;
 class NNodePinInput;
 class NNodePinOutput;
-class NNodePinExecution;
+class NNodePinExecution; /*!いらないかも*/
+
 // T
 class NNodeTemplate;
 
@@ -45,18 +49,28 @@ using ParentRef = std::weak_ptr<T>;
 template <typename T>
 using ChildRef = std::shared_ptr<T>;
 
+//DELETE:
 /*!インプットピンのデータ送信元*/
-using SourcePinRef = std::weak_ptr<NNodePinOutput>;
+using SourcePinWeakRef = std::weak_ptr<NNodePinOutput>;
 
+//DELETE:
 /*!アウトプットピンのデータ送信先*/
-using TargetPinRef = std::weak_ptr<NNodePinInput>;
-using PackedTargetPinRef = std::vector<TargetPinRef>;
+using TargetPinWeakRef = std::weak_ptr<NNodePinInput>;
+using PackedTargetPinWeakRef = std::vector<TargetPinWeakRef>;
 
+/*!次に実行されるノードの弱参照*/
+using NNodeExecutorWeakRef=std::weak_ptr<NNodeExecutor>;
+
+/*
+* ピンのファンクタの型
+* See also NNodePinBase::GetData()
+*/
 using CallbackFunction = std::function<Variant(void)>;
 
 /**グラフの頂点となる*/
 class NNodeBase : public INInfo, private Noncopyable {
  private:
+  /*!いる？*/
   bool bIsExecutionNode;
 
  protected:
@@ -154,16 +168,15 @@ class NNodePinInput : public NNodePinBase {
 /**
  * データ出力用のピン
  */
-
 class NNodePinOutput : public NNodePinBase {
  protected:
   // THINK:Needless?
   /*!値の出力先のピン*/
-  TargetPinRef targetPin;
+  TargetPinWeakRef targetPin;
 
  public:
   NNodePinOutput() : NNodePinBase(){};
-  NNodePinOutput(TargetPinRef target) : NNodePinBase(), targetPin(target){};
+  NNodePinOutput(TargetPinWeakRef target) : NNodePinBase(), targetPin(target){};
   virtual ~NNodePinOutput() = default;
   Variant Calculate() { return "Success"; }
 };
@@ -198,13 +211,29 @@ class NNodeExecutionTest1 : public NNodeBase {
   virtual ~NNodeExecutionTest1() = default;
 };
 
-
+/*
+* 実行ノードクラス
+* @note 何らかの処理を行うクラス。
+*/
 class NNodeExecutor : public NNodeBase {
  protected:
+  NNodeExecutorWeakRef parent;
  public:
   NNodeExecutor() = default;
   virtual ~NNodeExecutor() = default;
+  virtual void Execute() override;
+};
 
+/*
+* NNodeExecutorに必要なVariantを提供するクラス。
+* NNodePinを保持する。
+*/
+class NNodeAuxiliary : public NNodeBase {
+ protected:
+ public:
+  NNodeAuxiliary() = default;
+  virtual ~NNodeAuxiliary() = default;
+  virtual void Execute() override{};
 };
 
 class NEventImpl : public NEventBase {
