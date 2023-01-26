@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include"NMemory.h"
 #include"NVariant.h"

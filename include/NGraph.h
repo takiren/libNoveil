@@ -45,13 +45,19 @@ using ParentRef = std::weak_ptr<T>;
 template <typename T>
 using ChildRef = std::shared_ptr<T>;
 
+//DELETE:
 /*!インプットピンのデータ送信元*/
 using SourcePinRef = std::weak_ptr<NNodePinOutput>;
 
+//DELETE:
 /*!アウトプットピンのデータ送信先*/
 using TargetPinRef = std::weak_ptr<NNodePinInput>;
 using PackedTargetPinRef = std::vector<TargetPinRef>;
 
+/*
+* ピンのファンクタの型
+* See also NNodePinBase::GetData()
+*/
 using CallbackFunction = std::function<Variant(void)>;
 
 /**グラフの頂点となる*/

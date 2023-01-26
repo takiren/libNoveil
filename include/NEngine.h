@@ -1,7 +1,8 @@
-#include <SDL.h>
+﻿#include <SDL.h>
 
 namespace noveil {
 
+/*!こいつからたたく*/
 class NEngine {
  private:
   SDL_Window* windowRef;
