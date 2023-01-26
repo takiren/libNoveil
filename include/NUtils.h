@@ -1,11 +1,11 @@
-#pragma once
+ï»¿#pragma once
 #include "uuid_v4.h"
 namespace noveil {
 static UUIDv4::UUIDGenerator<std::mt19937_64> NUUIDGen;
 using NUUID = UUIDv4::UUID;
 
-//‚±‚ê‚ğŒp³‚µ‚Äuid‚ğì‚ë‚¤I
-/*!‚±‚ê‚ğŒp³‚·‚é‚¾‚¯‚ÅƒCƒ“ƒXƒ^ƒ“ƒX‚Éuid‚ª¶¬‚³‚ê‚é*/
+//ã“ã‚Œã‚’ç¶™æ‰¿ã—ã¦uidã‚’ä½œã‚ã†ï¼
+/*!ã“ã‚Œã‚’ç¶™æ‰¿ã™ã‚‹ã ã‘ã§ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã«uidãŒç”Ÿæˆã•ã‚Œã‚‹*/
 class INInfo {
  private:
   NUUID uid;
