@@ -1,0 +1,5 @@
+﻿  pch.cpp
+C:\Users\taki\source\repos\takiren\Noveil\libNoveil\include\NGraph.h(263,24): warning C4099: 'noveil::NNodeDescriptor': タイプ名は最初 'class' として使われていましたが 'struct' として使われています。
+C:\Users\taki\source\repos\takiren\Noveil\libNoveil\include\NGraph.h(263): message : 'noveil::NNodeDescriptor' の宣言を確認してください
+  test.cpp
+  LibNoveilTest.vcxproj -> C:\Users\taki\source\repos\takiren\Noveil\libNoveil\build\x64\Debug\LibNoveilTest.exe

@@ -12,9 +12,11 @@
 
 #include "NUtils.h"
 #include "NVariant.h"
+#include "json.hpp"
 
 namespace noveil {
 
+using json = nlohmann::json;
 // グラフ
 class NGraphBase;
 class NSequencer;
@@ -49,42 +51,45 @@ using ParentRef = std::weak_ptr<T>;
 template <typename T>
 using ChildRef = std::shared_ptr<T>;
 
-//DELETE:
+// DELETE:
 /*!インプットピンのデータ送信元*/
 using SourcePinWeakRef = std::weak_ptr<NNodePinOutput>;
 
-//DELETE:
+// DELETE:
 /*!アウトプットピンのデータ送信先*/
 using TargetPinWeakRef = std::weak_ptr<NNodePinInput>;
 using PackedTargetPinWeakRef = std::vector<TargetPinWeakRef>;
 
 /*!次に実行されるノードの弱参照*/
-using NNodeExecutorWeakRef=std::weak_ptr<NNodeExecutor>;
+using NNodeExecutorWeakRef = std::weak_ptr<NNodeExecutor>;
 
 /*
-* ピンのファンクタの型
-* See also NNodePinBase::GetData()
-*/
+ * ピンのファンクタの型
+ * See also NNodePinBase::GetData()
+ */
+
 using CallbackFunction = std::function<Variant(void)>;
+
+class NNodeDescriptor;
 
 /**グラフの頂点となる*/
 class NNodeBase : public INInfo, private Noncopyable {
  private:
-  /*!いる？*/
-  bool bIsExecutionNode;
-
  protected:
   std::vector<ChildRef<NNodePinInput>> pinInput;
   std::vector<ChildRef<NNodePinOutput>> pinOutput;
 
  public:
-  explicit NNodeBase() : INInfo(), bIsExecutionNode(false){};
+  explicit NNodeBase() : INInfo(){};
+  NNodeBase(json j){};
   virtual ~NNodeBase() = default;
 
   virtual void AddInputNode(){};
   virtual void AddOutputNode(){};
 
   virtual void Execute(){};
+
+  json GetJson(){};
 };
 
 /**多分いらない*/
@@ -213,12 +218,13 @@ class NNodeExecutionTest1 : public NNodeBase {
 };
 
 /*
-* 実行ノードクラス
-* @note 何らかの処理を行うクラス。
-*/
+ * 実行ノードクラス
+ * @note 何らかの処理を行うクラス。
+ */
 class NNodeExecutor : public NNodeBase {
  protected:
   NNodeExecutorWeakRef parent;
+
  public:
   NNodeExecutor() = default;
   virtual ~NNodeExecutor() = default;
@@ -226,9 +232,9 @@ class NNodeExecutor : public NNodeBase {
 };
 
 /*
-* NNodeExecutorに必要なVariantを提供するクラス。
-* NNodePinを保持する。
-*/
+ * NNodeExecutorに必要なVariantを提供するクラス。
+ * NNodePinを保持する。
+ */
 class NNodeAuxiliary : public NNodeBase {
  protected:
  public:
@@ -251,6 +257,15 @@ class NSequencer : public NGraphBase {
  public:
   explicit NSequencer() = default;
   virtual ~NSequencer() = default;
+};
+
+/*!NNodeが持つ値を格納する。*/
+struct NNodeDescriptor {
+  json j;
+  NNodeDescriptor(const NNodeBase& rhs) {
+    j["name"] = rhs.GetName();
+    j["uid"] = rhs.GetUID().bytes();
+  }
 };
 
 }  // namespace noveil
