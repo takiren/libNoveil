@@ -29,34 +29,30 @@ class NFileIO {
  */
 
 template <typename _ret, typename _key, typename... Args>
-class NFileParserTemplate {
+class NFileParserTemplate
+    : public Singleton<NFileParserTemplate<_ret, _key, Args...>> {
  private:
-  static NFileParserTemplate* instance_;
-  static std::mutex mutex_;
+
+  explicit NFileParserTemplate() = default;
 
  public:
   // TODO: Change val name.
   //@var funcHashMap _keyに対応した関数オブジェクトを格納。
   static hash_map<_key, std::function<_ret(Args...)>> funcHashMap;
-  explicit NFileParserTemplate() = delete;
 
   virtual ~NFileParserTemplate() = default;
 
-  NFileParserTemplate<_ret, _key, Args...>* operator=(
-      const NFileParserTemplate&) {
-    return instance_;
-  };
-  static NFileParserTemplate* GetInstance();
-
-  /*
-   * @brief ファイルへ書き込み
-   */
-  virtual void Write(){};
-
+  virtual void Read(){};
   /*
    * @brief ファイルから読み込み
    */
-  virtual void Read(){};
+  inline _ret ReadFrom(_key key){};
+
+  template <class Container>
+  inline std::vector<_ret> ReadAll(Container&& items) {
+    for (auto it = items.begin(); it != items.end(); ++it) {
+    }
+  };
 
   /*
    * @brief 関数オブジェクトを格納。
@@ -71,12 +67,6 @@ class NFileParserTemplate {
    */
   static _ret CallFunctor(_key key) { return std::move(funcHashMap[key]()); };
 };
-
-template <typename _ret, typename _key, typename... Args>
-inline NFileParserTemplate<_ret, _key, Args...>*
-noveil::NFileParserTemplate<_ret, _key, Args...>::GetInstance() {
-  return nullptr;
-}
 
 /*!
  * @brief funcHashMapの初期化。
