@@ -6,6 +6,7 @@
  *
  */
 
+#include <algorithm>
 #include <functional>
 #include <memory>
 #include <queue>
@@ -45,20 +46,17 @@ class NNodeTemplate;
 template <typename T>
 using ParentRef = std::weak_ptr<T>;
 
+template <typename T>
+using PackedParentRef = std::vector<ParentRef<T>>;
+
 /*
  * 強参照
  */
 template <typename T>
 using ChildRef = std::shared_ptr<T>;
 
-// DELETE:
-/*!インプットピンのデータ送信元*/
-using SourcePinWeakRef = std::weak_ptr<NNodePinOutput>;
-
-// DELETE:
-/*!アウトプットピンのデータ送信先*/
-using TargetPinWeakRef = std::weak_ptr<NNodePinInput>;
-using PackedTargetPinWeakRef = std::vector<TargetPinWeakRef>;
+template <typename T>
+using PackedChildRef = std::vector<ChildRef<T>>;
 
 /*!次に実行されるノードの弱参照*/
 using NNodeExecutorWeakRef = std::weak_ptr<NNodeExecutor>;
@@ -77,16 +75,55 @@ class NNodeDescriptor;
 class NNodeBase : public INInfo, private Noncopyable {
  private:
  protected:
-  std::vector<ChildRef<NNodePinInput>> pinInput;
-  std::vector<ChildRef<NNodePinOutput>> pinOutput;
+  PackedChildRef<NNodePinInput> pinInput;
+  PackedChildRef<NNodePinOutput> pinOutput;
+
+  std::function<void()> executionCall;
 
  public:
   explicit NNodeBase() : INInfo(){};
-  NNodeBase(json j){};
   virtual ~NNodeBase() = default;
 
-  virtual void AddInputNode(){};
-  virtual void AddOutputNode(){};
+  void AddInputNode(NNodePinInput&& inPin) {
+    auto instance = std::make_shared<NNodePinInput>(inPin);
+    pinInput.emplace_back(instance);
+  };
+
+  void AddOutputNode(NNodePinInput&& outPin) {
+    auto instance = std::make_shared<NNodePinOutput>(outPin);
+    pinOutput.emplace_back(instance);
+  };
+
+  void AddInputNode(NNodePinInput* inPin) {
+    auto instance = std::make_shared<NNodePinInput>(inPin);
+    pinInput.emplace_back(instance);
+  };
+
+  void AddOutputNode(NNodePinInput* outPin) {
+    auto instance = std::make_shared<NNodePinOutput>(outPin);
+    pinOutput.emplace_back(instance);
+  };
+
+  inline PackedParentRef<NNodePinInput> GetPinInputRef() {
+    PackedParentRef<NNodePinInput> ret;
+    for (auto it = pinInput.begin(); it != pinInput.end(); ++it) {
+      ParentRef<NNodePinInput> p = *it;
+      ret.emplace_back(p);
+    }
+    return ret;
+  };
+
+  inline PackedParentRef<NNodePinOutput> GetPinOutputRef() {
+    PackedParentRef<NNodePinOutput> ret;
+    for (auto it = pinOutput.begin(); it != pinOutput.end(); ++it) {
+      ParentRef<NNodePinOutput> p = *it;
+      ret.emplace_back(p);
+    }
+    return ret;
+  };
+
+  inline int GetPinInputSize() const { return pinInput.size(); }
+  inline int GetPinOutputSize() const { return pinOutput.size(); }
 
   virtual void Execute(){};
 
@@ -150,15 +187,16 @@ class NNodePinBase : public INInfo, private Noncopyable {
   explicit NNodePinBase() : INInfo(){};
   virtual ~NNodePinBase() = default;
 
-  /* 
-  * Binds a functor which type is std::function<Variant(void)>.
-  * It holds copy.
-  * 与えられた関数オブジェクトのコピーを持つ。
-  * @warning BindWithRef, BindWithForwardingも
-  */
-  template<class T>
-  void Bind(const T&& rhs) { Get_val_call = rhs; };
-   
+  NNodePinBase(NNodePinBase&&) = default;
+
+  /*
+   * Binds a functor which type is std::function<Variant(void)>.
+   * It holds copy.
+   * 与えられた関数オブジェクトのコピーを持つ。
+   * @warning BindWithRef, BindWithForwardingも
+   */
+  void Bind(const CallbackFunction rhs) { Get_val_call = rhs; };
+
   void BindWithRef(const CallbackFunction& rhs) {
     Get_val_call = std::ref(rhs);
   }
@@ -193,11 +231,9 @@ class NNodePinOutput : public NNodePinBase {
  protected:
   // THINK:Needless?
   /*!値の出力先のピン*/
-  TargetPinWeakRef targetPin;
 
  public:
   NNodePinOutput() : NNodePinBase(){};
-  NNodePinOutput(TargetPinWeakRef target) : NNodePinBase(), targetPin(target){};
   virtual ~NNodePinOutput() = default;
   Variant Calculate() { return "Success"; }
 };
@@ -275,7 +311,7 @@ class NSequencer : public NGraphBase {
 };
 
 /*!NNodeが持つ値を格納する。*/
-struct NNodeDescriptor {
+class NNodeDescriptor {
   json j;
   NNodeDescriptor(const NNodeBase& rhs) {
     j["name"] = rhs.GetName();
