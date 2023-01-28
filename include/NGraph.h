@@ -10,6 +10,7 @@
 #include <functional>
 #include <memory>
 #include <queue>
+#include<optional>
 
 #include "NUtils.h"
 #include "NVariant.h"
@@ -33,8 +34,6 @@ class NEventImpl;
 
 // ピン
 class NNodePinBase;
-class NNodePinInput;
-class NNodePinOutput;
 class NNodePinExecution; /*!いらないかも*/
 
 // T
@@ -73,7 +72,11 @@ class NNodeDescriptor;
 
 class NExecutionImpl;
 
-class NExecutionImpl {};
+class NExecutionImpl {
+ public:
+  virtual void operator()(PackedParentRef<NNodePinBase>,
+                          PackedParentRef<NNodePinBase>, PackedVariant){};
+};
 
 /**グラフの頂点となる*/
 class NNodeBase : public INInfo, private Noncopyable {
@@ -90,11 +93,11 @@ class NNodeBase : public INInfo, private Noncopyable {
   explicit NNodeBase() : INInfo(){};
   virtual ~NNodeBase() = default;
 
-  void AddInputNode(NNodePinBase* inPin) {
+  inline void AddInputNode(NNodePinBase* inPin) {
     pinInput.emplace_back(std::shared_ptr<NNodePinBase>(inPin));
   };
 
-  void AddOutputNode(NNodePinBase* outPin) {
+  inline void AddOutputNode(NNodePinBase* outPin) {
     pinOutput.emplace_back(std::shared_ptr<NNodePinBase>(outPin));
   };
 
@@ -116,10 +119,13 @@ class NNodeBase : public INInfo, private Noncopyable {
     return ret;
   };
 
+  /*!ピンの数*/
   inline int GetPinInputSize() const { return pinInput.size(); }
   inline int GetPinOutputSize() const { return pinOutput.size(); }
 
-  virtual void Execute(){};
+  inline virtual void Execute(PackedVariant variants) {
+    this->executor(GetPinInputRef(), GetPinOutputRef(), variants);
+  };
 
   json GetJson(){};
 };
@@ -163,11 +169,13 @@ class NNodePinBase : public INInfo, private Noncopyable {
  private:
   /** std::variantのラッパークラス*/
   Variant mValue;
+
   // TODO: Rename the valiable name to better one.
   /*!これに受け取りたいデータを返す関数オブジェクトを登録*/
   CallbackFunction Get_val_call;
+
   /**
-   * ピンを保持するNNodeBaseへの参照
+   * ピンを保持するNNodeBaseへの参照エイリアス
    */
   using ParentNodeRef = ParentRef<NNodeBase>;
 
@@ -222,7 +230,6 @@ class NNodeExecutor : public NNodeBase {
  public:
   NNodeExecutor() = default;
   virtual ~NNodeExecutor() = default;
-  virtual void Execute() override;
 };
 
 /*
@@ -234,7 +241,6 @@ class NNodeAuxiliary : public NNodeBase {
  public:
   NNodeAuxiliary() = default;
   virtual ~NNodeAuxiliary() = default;
-  virtual void Execute() override{};
 };
 
 class NEventImpl : public NEventBase {
