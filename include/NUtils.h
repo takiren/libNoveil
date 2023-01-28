@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <mutex>
+#include<memory>
 
 #include "uuid_v4.h"
 
@@ -9,7 +10,7 @@ using NUUID = UUIDv4::UUID;
 
 // これを継承してuidを作ろう！
 /*!これを継承するだけでインスタンスにuidが生成される*/
-class INInfo {
+class INInfo :public std::enable_shared_from_this<INInfo>{
  private:
   NUUID uid;
   std::string name;
@@ -33,8 +34,10 @@ class Noncopyable {
 
 /*
  * @brief シングルトン用クラス
- * @details これを継承してシングルトンにする。 
+ * @details
+ * @warnings これを継承してシングルトンにする。継承先のコンストラクタをprotectedかprivateに変更。
  * @note スレッドセーフ。
+ * @depricated あとでやめるかも。変に気取るより冗長化したほうがいいかも。
  */
 template <class T>
 class Singleton {
@@ -52,13 +55,14 @@ class Singleton {
   static T* GetInstance();
 };
 
-/*!初期化*/
+/*!インスタンスがあるときは!nullptr*/
 template <class T>
 T* Singleton<T>::instance_ = nullptr;
 /*!初期化*/
 template <class T>
 std::mutex Singleton<T>::mutex_;
 
+/*!インスタンスを返す。*/
 template <class T>
 inline T* Singleton<T>::GetInstance() {
   std::lock_guard<std::mutex> lock(mutex_);

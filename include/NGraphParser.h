@@ -10,6 +10,9 @@ enum NNode {
   Entry,
   PlaySound,
   Exit,
+  PlayMusic,
+  ChangeMusic,
+  Transition
 };
 enum NPin {
   INT,

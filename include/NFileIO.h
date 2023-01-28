@@ -26,16 +26,15 @@ class NFileIO {
  * @tparam _ret 戻り値の型
  * @tparam _key ハッシュマップのキーの型
  * @tparam Args... 引数の型
+ * TODO:名前を変える。NFileって言ってるけどfileに限った話じゃないから。
  */
 
-template <typename _ret, typename _key, typename... Args>
-class NFileParserTemplate
-    : public Singleton<NFileParserTemplate<_ret, _key, Args...>> {
+template <typename _key, typename _ret, typename... Args>
+class NFileParserTemplate {
  private:
-
-  explicit NFileParserTemplate() = default;
-
+ protected:
  public:
+  NFileParserTemplate() = delete;
   // TODO: Change val name.
   //@var funcHashMap _keyに対応した関数オブジェクトを格納。
   static hash_map<_key, std::function<_ret(Args...)>> funcHashMap;
@@ -46,33 +45,48 @@ class NFileParserTemplate
   /*
    * @brief ファイルから読み込み
    */
-  inline _ret ReadFrom(_key key){};
-
-  template <class Container>
-  inline std::vector<_ret> ReadAll(Container&& items) {
-    for (auto it = items.begin(); it != items.end(); ++it) {
-    }
-  };
+  inline _ret ReadFrom(_key key, Args...){};
 
   /*
-   * @brief 関数オブジェクトを格納。
+   * @brief 関数オブジェクトを転送して格納。
+   * @details 完全転送を行う。
+   * @note msvcだとIDEでエラーが出るが、実際は出ない。
+   *
    */
-  static void AddFunctor(_key key, std::function<_ret(Args...)>&& functor) {
+  static void AddFunctor(_key&& key, std::function<_ret(Args...)>&& functor) {
+    funcHashMap[std::forward<_key>(key)] =
+        std::forward<decltype(functor)>(functor);
+  }
+
+  template <template <class...> class T>
+  static void ReadAll(std::vector<T<Args...>>&& container) {}
+
+  /*
+   * @brief 関数オブジェクトのコピーを格納。
+   * @details コピーを行う。
+   * @note visual studioだとエラーが出てるけどコンパイル通る。
+   */
+  static void AddFunctorCopy(_key key, std::function<_ret(Args...)> functor) {
     funcHashMap[key] = functor;
   }
 
   /*
    * @brief 関数オブジェクトをキーで呼び出し
    * @ret _ret
+   * @note
+   * std::moveしないと変数の寿命が尽きることがある(場合によるのでなんとも。)。
+   * visual studioだとエラーが出てるけどコンパイル通る。
    */
-  static _ret CallFunctor(_key key) { return std::move(funcHashMap[key]()); };
+  static _ret CallFunctor(_key&& key, Args&&... args) {
+    return funcHashMap[key](std::forward<Args>(args)...);
+  };
 };
 
 /*!
  * @brief funcHashMapの初期化。
  */
-template <typename _ret, typename _key, typename... Args>
+template <typename _key, typename _ret, typename... Args>
 hash_map<_key, std::function<_ret(Args...)>>
-    NFileParserTemplate<_ret, _key, Args...>::funcHashMap;
+    NFileParserTemplate<_key, _ret, Args...>::funcHashMap;
 
 }  // namespace noveil

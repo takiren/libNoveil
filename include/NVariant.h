@@ -26,7 +26,9 @@ using hash_map = std::unordered_map<KEY, DATA>;
 
 class Variant {
  private:
+  /*!いずれプラグインなどで型が足りなくなったら使う用。もうちょいまともなアプローチを考える。*/
   using CustomVariant = void*;
+
   using RawVariant =
       std::variant<int, float, double, std::string, CustomVariant>;
 
@@ -50,7 +52,7 @@ class Variant {
   };
 
   template <typename T>
-  bool bHasValue(T& v) {
+  bool bHasValue(T&& v) {
     return std::holds_alternative<T>(v);
   };
 

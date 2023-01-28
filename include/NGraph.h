@@ -70,6 +70,7 @@ using NNodeExecutorWeakRef = std::weak_ptr<NNodeExecutor>;
 
 using CallbackFunction = std::function<Variant(void)>;
 
+/*!NNodeの情報を受け渡す。*/
 class NNodeDescriptor;
 
 /**グラフの頂点となる*/
