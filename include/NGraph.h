@@ -81,8 +81,8 @@ class NNodeBase : public INInfo, private Noncopyable {
   NExecutionImpl executor;
 
  protected:
-  PackedChildRef<NNodePinInput> pinInput;
-  PackedChildRef<NNodePinOutput> pinOutput;
+  PackedChildRef<NNodePinBase> pinInput;
+  PackedChildRef<NNodePinBase> pinOutput;
 
   std::function<void()> executionCall;
 
@@ -90,27 +90,27 @@ class NNodeBase : public INInfo, private Noncopyable {
   explicit NNodeBase() : INInfo(){};
   virtual ~NNodeBase() = default;
 
-  void AddInputNode(NNodePinInput* inPin) {
-    pinInput.emplace_back(std::shared_ptr<NNodePinInput>(inPin));
+  void AddInputNode(NNodePinBase* inPin) {
+    pinInput.emplace_back(std::shared_ptr<NNodePinBase>(inPin));
   };
 
-  void AddOutputNode(NNodePinOutput* outPin) {
-    pinOutput.emplace_back(std::shared_ptr<NNodePinOutput>(outPin));
+  void AddOutputNode(NNodePinBase* outPin) {
+    pinOutput.emplace_back(std::shared_ptr<NNodePinBase>(outPin));
   };
 
-  inline PackedParentRef<NNodePinInput> GetPinInputRef() {
-    PackedParentRef<NNodePinInput> ret;
+  inline PackedParentRef<NNodePinBase> GetPinInputRef() {
+    PackedParentRef<NNodePinBase> ret;
     for (auto it = pinInput.begin(); it != pinInput.end(); ++it) {
-      ParentRef<NNodePinInput> p = *it;
+      ParentRef<NNodePinBase> p = *it;
       ret.emplace_back(p);
     }
     return ret;
   };
 
-  inline PackedParentRef<NNodePinOutput> GetPinOutputRef() {
-    PackedParentRef<NNodePinOutput> ret;
+  inline PackedParentRef<NNodePinBase> GetPinOutputRef() {
+    PackedParentRef<NNodePinBase> ret;
     for (auto it = pinOutput.begin(); it != pinOutput.end(); ++it) {
-      ParentRef<NNodePinOutput> p = *it;
+      ParentRef<NNodePinBase> p = *it;
       ret.emplace_back(p);
     }
     return ret;
@@ -209,57 +209,6 @@ class NNodePinBase : public INInfo, private Noncopyable {
     assert(Get_val_call);
     return Get_val_call();
   }
-};
-
-class NNodePinInput : public NNodePinBase {
- protected:
- public:
-  NNodePinInput() : NNodePinBase(){};
-  virtual ~NNodePinInput() = default;
-};
-
-/**
- * データ出力用のピン
- */
-class NNodePinOutput : public NNodePinBase {
- protected:
-  // THINK:Needless?
-  /*!値の出力先のピン*/
-
- public:
-  NNodePinOutput() : NNodePinBase(){};
-  virtual ~NNodePinOutput() = default;
-  Variant Calculate() { return "Success"; }
-};
-
-class NNodePinExecution : public NNodePinBase {
- private:
-  std::vector<NUUID> parents;
-  NUUID target;
-
-  using ParentNodeRef = ParentRef<NEventBase>;
-  ParentNodeRef pnodeRef;
-
- public:
-  explicit NNodePinExecution() : NNodePinBase(){};
-  virtual ~NNodePinExecution() = default;
-  void Triggered() { pnodeRef.lock()->DoAction(); };
-};
-
-class NNodeExecutionTest1 : public NNodeBase {
- protected:
- public:
-  NNodeExecutionTest1() : NNodeBase() {
-    auto ipin = std::make_unique<NNodePinInput>();
-    auto opin = std::make_unique<NNodePinOutput>();
-
-    ipin->Bind(&NNodePinOutput::Calculate, opin);
-    pinInput.emplace_back(std::move(ipin));
-    pinOutput.emplace_back(std::move(opin));
-  }
-
-  Variant func() { return pinInput.front()->GetData(); }
-  virtual ~NNodeExecutionTest1() = default;
 };
 
 /*

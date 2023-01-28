@@ -44,7 +44,7 @@ TEST(FuncMapTest, Forwarding2) {
 
 TEST(NNodeTest, BindCopy) {
   auto* node = new NNodeBase();
-  auto* nin = new NNodePinInput();
+  auto* nin = new NNodePinBase();
   {
     struct A {
       std::string operator()() { return "This is A."; };
@@ -54,7 +54,7 @@ TEST(NNodeTest, BindCopy) {
     nin->Bind(a);
     auto str = nin->GetData();
   }
-  auto* nout = new NNodePinOutput();
+  auto* nout = new NNodePinBase();
   {
     struct B {
       std::string operator()() { return "This is B."; };
@@ -66,11 +66,10 @@ TEST(NNodeTest, BindCopy) {
   EXPECT_EQ("This is A.", nin->GetData().Get<std::string>());
   EXPECT_EQ("This is B.", nout->GetData().Get<std::string>());
 
-  auto instance = std::make_shared<NNodeExecutionTest1>();
   {
     node->AddInputNode(nin);
     node->AddOutputNode(nout);
-    node->AddInputNode(new NNodePinInput());
+    node->AddInputNode(new NNodePinBase());
   }
 
   EXPECT_EQ(2, node->GetPinInputRef().size());
