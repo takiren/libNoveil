@@ -52,7 +52,7 @@ TEST(NNodeTest, BindCopy) {
 
     A a;
     nin->Bind(a);
-    auto str = nin->GetData();
+    auto str = nin->value();
   }
   auto* nout = new NNodePinBase();
   {
@@ -63,8 +63,8 @@ TEST(NNodeTest, BindCopy) {
     B b;
     nout->Bind(b);
   }
-  EXPECT_EQ("This is A.", nin->GetData().Get<std::string>());
-  EXPECT_EQ("This is B.", nout->GetData().Get<std::string>());
+  EXPECT_EQ("This is A.", nin->value().value().Get<std::string>());
+  EXPECT_EQ("This is B.", nout->value().value().Get<std::string>());
 
   {
     node->AddInputNode(nin);

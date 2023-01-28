@@ -9,8 +9,8 @@
 #include <algorithm>
 #include <functional>
 #include <memory>
+#include <optional>
 #include <queue>
-#include<optional>
 
 #include "NUtils.h"
 #include "NVariant.h"
@@ -213,7 +213,7 @@ class NNodePinBase : public INInfo, private Noncopyable {
     Get_val_call = std::bind(a, std::ref(boundObject));
   };
 
-  Variant GetData() {
+  std::optional<Variant> value() {
     assert(Get_val_call);
     return Get_val_call();
   }

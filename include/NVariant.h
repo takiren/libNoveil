@@ -3,6 +3,7 @@
 #include <cassert>
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <variant>
@@ -37,8 +38,6 @@ class Variant {
  public:
   Variant() = default;
   virtual ~Variant() = default;
-
-  Variant& operator=(const Variant& rhs) { this->variable = rhs.variable; }
 
   template <typename T>
   Variant(const T& rhs) {
