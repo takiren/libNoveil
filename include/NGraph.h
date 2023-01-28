@@ -151,7 +151,9 @@ class NNodePinBase : public INInfo, private Noncopyable {
   virtual ~NNodePinBase() = default;
 
   /*!Binds a functor which type is std::function<Variant(void)>.*/
-  void Bind(const CallbackFunction&& rhs) { Get_val_call = rhs; };
+  void Bind(const CallbackFunction&& rhs) {
+    Get_val_call = std::forward<decltype(rhs)>(rhs);
+  };
 
   /*!Binds like std::bind(&Hoge::fuga,std::ref(pointer))*/
   template <class T, class F>

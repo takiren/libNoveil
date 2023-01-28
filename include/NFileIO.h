@@ -3,8 +3,8 @@
 
 #include <filesystem>
 #include <mutex>
+#include <optional>
 #include <string>
-#include
 
 #include "NGraph.h"
 #include "NMemory.h"
@@ -44,8 +44,15 @@ class NFileParserTemplate {
   virtual void Read(){};
   /*
    * @brief ファイルから読み込み
+   * @depricated
    */
-  inline _ret ReadFrom(_key key, Args...){};
+  inline _ret ReadFrom(_key key, Args... args) {
+    return funcHashMap[key](args...);
+  };
+
+  static inline _ret Parse(_key&& key, Args&&... args) {
+    return funcHashMap[key](std::forward<Args>(args)...);
+  };
 
   /*
    * @brief 関数オブジェクトを転送して格納。
@@ -57,9 +64,6 @@ class NFileParserTemplate {
     funcHashMap[std::forward<_key>(key)] =
         std::forward<decltype(functor)>(functor);
   }
-
-  template <template <class...> class T>
-  static void ReadAll(std::vector<T<Args...>>&& container) {}
 
   /*
    * @brief 関数オブジェクトのコピーを格納。
@@ -77,7 +81,7 @@ class NFileParserTemplate {
    * std::moveしないと変数の寿命が尽きることがある(場合によるのでなんとも。)。
    * visual studioだとエラーが出てるけどコンパイル通る。
    */
-  static _ret CallFunctor(_key&& key, Args&&... args) {
+  static inline _ret CallFunctor(_key&& key, Args&&... args) {
     return funcHashMap[key](std::forward<Args>(args)...);
   };
 };

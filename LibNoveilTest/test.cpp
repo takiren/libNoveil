@@ -41,3 +41,8 @@ TEST(FuncMapTest, Forwarding2) {
 
   EXPECT_EQ(30, Parser3::CallFunctor("test1", 5, 6));
 }
+
+
+TEST(FuncMapTest, ReadAll) {
+    
+}

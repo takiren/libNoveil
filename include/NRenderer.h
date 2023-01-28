@@ -4,7 +4,6 @@
 #include "SDL.h"
 
 namespace noveil {
-
 class NMainRenderer : private Singleton<NMainRenderer> {
  private:
  protected:
