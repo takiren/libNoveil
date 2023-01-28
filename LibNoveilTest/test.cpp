@@ -30,7 +30,7 @@ TEST(FuncMapTest, Forwarding) {
   EXPECT_EQ("Forwarding", StrStrStrParser::CallFunctor("test2", "Forwarding"));
 }
 
-class Parser3 : public NFileParserTemplate<std::string, int, int, int> {};
+class Parser3 : public NFileParserTemplate<int,std::string,  int, int> {};
 
 TEST(FuncMapTest, Forwarding2) {
   struct multiply {

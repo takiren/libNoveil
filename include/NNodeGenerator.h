@@ -2,7 +2,6 @@
 
 #include"NGraph.h"
 
-
 namespace noveil {
 
 }

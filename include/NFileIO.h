@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <mutex>
 #include <string>
+#include
 
 #include "NGraph.h"
 #include "NMemory.h"
@@ -28,8 +29,7 @@ class NFileIO {
  * @tparam Args... 引数の型
  * TODO:名前を変える。NFileって言ってるけどfileに限った話じゃないから。
  */
-
-template <typename _key, typename _ret, typename... Args>
+template <typename _ret, typename _key, typename... Args>
 class NFileParserTemplate {
  private:
  protected:
@@ -85,8 +85,8 @@ class NFileParserTemplate {
 /*!
  * @brief funcHashMapの初期化。
  */
-template <typename _key, typename _ret, typename... Args>
+template <typename _ret, typename _key, typename... Args>
 hash_map<_key, std::function<_ret(Args...)>>
-    NFileParserTemplate<_key, _ret, Args...>::funcHashMap;
+    NFileParserTemplate<_ret, _key, Args...>::funcHashMap;
 
 }  // namespace noveil

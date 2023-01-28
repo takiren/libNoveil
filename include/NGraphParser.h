@@ -33,8 +33,6 @@ enum NPin {
  */
 class NGraphParser : public NFileParserTemplate<NNodeBase*, json> {
  private:
-  static NGraphParser* instance;
-  static std::mutex mutex_;
  public:
   NGraphParser() = delete;
   virtual ~NGraphParser() = default;
