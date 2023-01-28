@@ -150,14 +150,26 @@ class NNodePinBase : public INInfo, private Noncopyable {
   explicit NNodePinBase() : INInfo(){};
   virtual ~NNodePinBase() = default;
 
-  /*!Binds a functor which type is std::function<Variant(void)>.*/
-  void Bind(const CallbackFunction&& rhs) {
+  /* 
+  * Binds a functor which type is std::function<Variant(void)>.
+  * It holds copy.
+  * 与えられた関数オブジェクトのコピーを持つ。
+  * @warning BindWithRef, BindWithForwardingも
+  */
+  template<class T>
+  void Bind(const T&& rhs) { Get_val_call = rhs; };
+   
+  void BindWithRef(const CallbackFunction& rhs) {
+    Get_val_call = std::ref(rhs);
+  }
+
+  void BindWithForwarding(const CallbackFunction&& rhs) {
     Get_val_call = std::forward<decltype(rhs)>(rhs);
   };
 
   /*!Binds like std::bind(&Hoge::fuga,std::ref(pointer))*/
   template <class T, class F>
-  void Bind(T&& a, F&& boundObject) {
+  void Bind(const T& a, const F& boundObject) {
     Get_val_call = std::bind(a, std::ref(boundObject));
   };
 

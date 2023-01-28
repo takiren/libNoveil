@@ -35,10 +35,10 @@ class Variant {
   RawVariant variable;
 
  public:
-  explicit Variant() = default;
+  Variant() = default;
   virtual ~Variant() = default;
 
-  Variant& operator=(const Variant& rhs) { this->variable = rhs.variable; }
+  //Variant operator=(const Variant& rhs) { this->variable = rhs.variable; }
 
   template <typename T>
   Variant(const T& rhs) {

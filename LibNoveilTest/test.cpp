@@ -27,6 +27,7 @@ TEST(FuncMapTest, Forwarding) {
     StrStrStrParser::AddFunctor("test2", tst);
   }
 
+
   EXPECT_EQ("Forwarding", StrStrStrParser::CallFunctor("test2", "Forwarding"));
 }
 
@@ -43,6 +44,6 @@ TEST(FuncMapTest, Forwarding2) {
 }
 
 
-TEST(FuncMapTest, ReadAll) {
+TEST(NNodeTest, BindCopy) {
     
 }
