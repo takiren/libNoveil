@@ -71,9 +71,15 @@ using CallbackFunction = std::function<Variant(void)>;
 /*!NNodeの情報を受け渡す。*/
 class NNodeDescriptor;
 
+class NExecutionImpl;
+
+class NExecutionImpl {};
+
 /**グラフの頂点となる*/
 class NNodeBase : public INInfo, private Noncopyable {
  private:
+  NExecutionImpl executor;
+
  protected:
   PackedChildRef<NNodePinInput> pinInput;
   PackedChildRef<NNodePinOutput> pinOutput;
@@ -84,24 +90,12 @@ class NNodeBase : public INInfo, private Noncopyable {
   explicit NNodeBase() : INInfo(){};
   virtual ~NNodeBase() = default;
 
-  void AddInputNode(NNodePinInput&& inPin) {
-    auto instance = std::make_shared<NNodePinInput>(inPin);
-    pinInput.emplace_back(instance);
-  };
-
-  void AddOutputNode(NNodePinInput&& outPin) {
-    auto instance = std::make_shared<NNodePinOutput>(outPin);
-    pinOutput.emplace_back(instance);
-  };
-
   void AddInputNode(NNodePinInput* inPin) {
-    auto instance = std::make_shared<NNodePinInput>(inPin);
-    pinInput.emplace_back(instance);
+    pinInput.emplace_back(std::shared_ptr<NNodePinInput>(inPin));
   };
 
-  void AddOutputNode(NNodePinInput* outPin) {
-    auto instance = std::make_shared<NNodePinOutput>(outPin);
-    pinOutput.emplace_back(instance);
+  void AddOutputNode(NNodePinOutput* outPin) {
+    pinOutput.emplace_back(std::shared_ptr<NNodePinOutput>(outPin));
   };
 
   inline PackedParentRef<NNodePinInput> GetPinInputRef() {
@@ -145,7 +139,7 @@ class NNodeTemplate : public NNodeBase {
 class NGraphBase : public INInfo, private Noncopyable {
  private:
  public:
-  explicit NGraphBase() : INInfo(){};
+  NGraphBase() = default;
   virtual ~NGraphBase() = default;
 };
 
