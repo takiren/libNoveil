@@ -17,6 +17,9 @@ class Variant;
 using NVariantRef = std::shared_ptr<Variant>;
 using PackedVariant = std::vector<Variant>;
 
+template<class T>
+using MappedVariant=std::map<T,Variant>;
+
 template <typename KEY, typename DATA>
 using hash_map = std::unordered_map<KEY, DATA>;
 

@@ -75,3 +75,4 @@ TEST(NNodeTest, BindCopy) {
   EXPECT_EQ(2, node->GetPinInputRef().size());
   EXPECT_EQ(1, node->GetPinOutputRef().size());
 }
+

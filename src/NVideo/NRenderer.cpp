@@ -1,5 +1,9 @@
 #include "NRenderer.h"
 
-void noveil::NMainRenderer::Init() { 
-	SDL_Init(SDL_INIT_VIDEO);
-}
+namespace noveil {
+namespace render {
+void SetWindow(SDL_Window* wind) { windowRef = wind; }
+void SetRenderer(SDL_Renderer* render) {}
+
+}  // namespace render
+}  // namespace noveil

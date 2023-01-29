@@ -10,6 +10,8 @@ set(EXT_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external)
 
 add_definitions(-D_UNICODE)
 
+add_subdirectory(${EXT_LIB_DIR}/SDL)
+
 if(CMAKE_SYSTEM_NAME MATCHES "Windows")
     set(LibNOVEIL_TARGET "win")
     set(LibNOVEIL_WINDOWS TRUE)
@@ -44,7 +46,7 @@ list(APPEND LibNoveil_INC_DIR
     ${LibNoveil_PATH}/include
 )
 
-file(GLOB_RECURSE SOURCE_LIST CONFIGURE_DEPENDS "${LibNoveil_PATH}/include/*.h" "${LibNoveil_PATH}/src/*.cpp")
+file(GLOB_RECURSE SOURCE_LIST CONFIGURE_DEPENDS "${LibNoveil_PATH}/include/*.h" "${LibNoveil_PATH}/src/*.cpp" "${LibNoveil_PATH}/src/*.c")
 
 # ----------------------------------------
 # ----------------------------------------

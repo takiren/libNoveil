@@ -12,33 +12,18 @@
 #include "NVariant.h"
 namespace noveil {
 
+namespace rsc {
+
 namespace fs = std::filesystem;
-template <class T>
-class NAssetManager final :public Singleton<NAssetManager<T>>{
- private:
-  static NAssetManager* instance_;
-  std::mutex mutex_;
- protected:
- public:
-  static Load(fs::path path);
-};
-
-namespace asset {
-std::vector<INAssetBase> PackedAssets;
-
-hash_map<NUUID, INAssetBase> assetsMap;
 
 template <class T>
-std::weak_ptr<T> GetAsset(NUUID& uid){return static_cast < };
+hash_map<fs::path, std::shared_ptr<T>> resources;
 
 template <class T>
-std::optional<std::weak_ptr<INAssetBase>> LoadAsset();
-
-template <class T>
-std::optional<std::weak_ptr<INAssetBase>> LoadAsset() {
-  return std::optional<std::weak_ptr<INAssetBase>>();
+std::optional<std::weak_ptr<T>> LoadAsset(fs::path path) {
+  if (assets<T>[path]) return std::nullopt;
+  assets<T>[path] = std::make_unique<T>(T::Create(path));
 }
-
 }  // namespace asset
 
 }  // namespace noveil

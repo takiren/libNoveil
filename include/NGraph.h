@@ -11,6 +11,7 @@
 #include <memory>
 #include <optional>
 #include <queue>
+#include <thread>
 
 #include "NUtils.h"
 #include "NVariant.h"
@@ -78,10 +79,26 @@ class NExecutionImpl {
                           PackedParentRef<NNodePinBase>, PackedVariant){};
 };
 
+class NNodeEntryPoint : public INInfo, private Noncopyable {
+ private:
+  ChildRef<NNodeBase> nextNode;
+
+ public:
+  explicit NNodeEntryPoint() = default;
+  virtual ~NNodeEntryPoint() = default;
+};
+
+class NNodeEndPoint : public INInfo, private Noncopyable {
+ private:
+ public:
+};
+
 /**グラフの頂点となる*/
 class NNodeBase : public INInfo, private Noncopyable {
  private:
   NExecutionImpl executor;
+
+  ParentRef<NNodeBase> nextNode;
 
  protected:
   PackedChildRef<NNodePinBase> pinInput;
@@ -123,8 +140,9 @@ class NNodeBase : public INInfo, private Noncopyable {
   inline int GetPinInputSize() const { return pinInput.size(); }
   inline int GetPinOutputSize() const { return pinOutput.size(); }
 
-  inline virtual void Execute(PackedVariant variants) {
-    this->executor(GetPinInputRef(), GetPinOutputRef(), variants);
+  template <class... Args>
+  inline void Execute(Args... args) {
+    this->executor(GetPinInputRef(), GetPinOutputRef(), args...);
   };
 
   json GetJson(){};
@@ -144,6 +162,8 @@ class NNodeTemplate : public NNodeBase {
 
 class NGraphBase : public INInfo, private Noncopyable {
  private:
+  hash_map<NUUID, NNodeBase> nodes;
+
  public:
   NGraphBase() = default;
   virtual ~NGraphBase() = default;
@@ -251,15 +271,34 @@ class NEventImpl : public NEventBase {
   virtual ~NEventImpl() = default;
 };
 
+class NNodeEntryPoint : public INInfo, private Noncopyable {
+ private:
+  ChildRef<NNodeBase> nextNode;
+
+ public:
+  explicit NNodeEntryPoint() = default;
+  virtual ~NNodeEntryPoint() = default;
+};
+
+class NNodeEndPoint : public INInfo, private Noncopyable {
+ private:
+ public:
+};
+
 class NSequencer : public NGraphBase {
  private:
+  ChildRef<NNodeEntryPoint> entryPoint;
+  ChildRef<NNodeEndPoint> endPoint;
+
  protected:
  public:
   explicit NSequencer() = default;
   virtual ~NSequencer() = default;
+
+  void operator()(){
+
+  };
 };
-
-
 
 /*!NNodeが持つ値を格納する。*/
 class NNodeDescriptor {
