@@ -1,5 +1,9 @@
 #include "NAsset.h"
 
 namespace noveil {
-NAssetImage::NAssetImage(Filepath path) { fpath = path; }
+NAssetImage::NAssetImage(fs::path path) {
+
+}
+
+
 }  // namespace noveil

@@ -2,31 +2,62 @@
 
 #include <filesystem>
 #include <string>
+
+#include "NUtils.h"
+#include "NVariant.h"
 namespace noveil {
-class NAssetBase;
-class NAssetConverter;
 
-class NAssetConverter {
+namespace fs = std::filesystem;
+class INAssetBase;  // インターフェース
+class NAssetImage;
+
+class FileInterface;
+
+class FileInterface {
  private:
+  fs::path filePath;
+
  public:
-  NAssetConverter() = default;
 };
 
-class NAssetBase {
- public:
-  NAssetBase() = default;
-  virtual ~NAssetBase() = default;
-};
+template <class T>
+class AssetInterface;
 
-class NAssetImage {
+template<class T>
+class AssetInterface {
  private:
-  using Filepath = std::filesystem::path;
+  T item;
+};
 
-  //Path to file(like a.png, b.jpg, c.csv,...)
-  Filepath fpath;
+class NTexture {
+
+};
+
+class INAssetBase : public INInfo {
+ private:
+  fs::path filePath;
+  std::string name;
+
+  Variant variable;
 
  public:
-  NAssetImage(Filepath path);
-  virtual ~NAssetImage() = default;
+  explicit INAssetBase() = default;
+  explicit INAssetBase(fs::path path) { filePath = path; };
+  virtual ~INAssetBase() = default;
+
+  virtual auto Load(fs::path) const -> decltype(this);
+  virtual auto SaveAsAsset() const -> decltype(this);
+
+  virtual std::string GetName() const { return name; }
 };
+
+class NAssetImage : public INAssetBase {
+ private:
+ protected:
+ public:
+  explicit NAssetImage() = default;
+  explicit NAssetImage(fs::path path);
+
+};
+
 }  // namespace noveil

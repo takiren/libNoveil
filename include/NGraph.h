@@ -259,6 +259,8 @@ class NSequencer : public NGraphBase {
   virtual ~NSequencer() = default;
 };
 
+
+
 /*!NNodeが持つ値を格納する。*/
 class NNodeDescriptor {
   json j;
