@@ -76,3 +76,27 @@ TEST(NNodeTest, BindCopy) {
   EXPECT_EQ(1, node->GetPinOutputRef().size());
 }
 
+TEST(SequencerTest, case1) {
+  auto* seq = new NSequencer();
+  auto node1 = seq->AddNode();
+  auto node2 = seq->AddNode();
+  node1.lock()->BindToNextNode(node2);
+  node1.lock()->SetImplementation(
+      [](PackedParentRef<NNodePinBase>, PackedParentRef<NNodePinBase>) {
+        std::cout << "node1" << std::endl;
+        _sleep(2000);
+        return;
+      });
+  node2.lock()->SetImplementation(
+      [](PackedParentRef<NNodePinBase>, PackedParentRef<NNodePinBase>) {
+        std::cout << "node2" << std::endl;
+        return;
+      });
+
+  std::thread th([&]() {
+    seq->Execute();
+    return;
+  });
+  std::cout << "FInished." << std::endl;
+  _sleep(4000);
+}

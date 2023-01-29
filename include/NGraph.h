@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <map>
 #include <memory>
 #include <optional>
 #include <queue>
@@ -79,24 +80,12 @@ class NExecutionImpl {
                           PackedParentRef<NNodePinBase>, PackedVariant){};
 };
 
-class NNodeEntryPoint : public INInfo, private Noncopyable {
- private:
-  ChildRef<NNodeBase> nextNode;
-
- public:
-  explicit NNodeEntryPoint() = default;
-  virtual ~NNodeEntryPoint() = default;
-};
-
-class NNodeEndPoint : public INInfo, private Noncopyable {
- private:
- public:
-};
-
 /**グラフの頂点となる*/
 class NNodeBase : public INInfo, private Noncopyable {
  private:
-  NExecutionImpl executor;
+  std::function<void(PackedParentRef<NNodePinBase>,
+                     PackedParentRef<NNodePinBase>)>
+      executor;
 
   ParentRef<NNodeBase> nextNode;
 
@@ -140,9 +129,20 @@ class NNodeBase : public INInfo, private Noncopyable {
   inline int GetPinInputSize() const { return pinInput.size(); }
   inline int GetPinOutputSize() const { return pinOutput.size(); }
 
+  inline void BindToNextNode(
+      ParentRef<NNodeBase> node) {
+    this->nextNode = node;
+  }
+
+  template <class T>
+  void SetImplementation(const T&& impl) {
+    this->executor = impl;
+  }
+
   template <class... Args>
   inline void Execute(Args... args) {
     this->executor(GetPinInputRef(), GetPinOutputRef(), args...);
+    if (!nextNode.expired()) this->nextNode.lock()->Execute();
   };
 
   json GetJson(){};
@@ -162,11 +162,15 @@ class NNodeTemplate : public NNodeBase {
 
 class NGraphBase : public INInfo, private Noncopyable {
  private:
-  hash_map<NUUID, NNodeBase> nodes;
+ protected:
+  hash_map<NUUID, ChildRef<NNodeBase>> nodes;
 
  public:
   NGraphBase() = default;
   virtual ~NGraphBase() = default;
+
+  bool Connect(NUUID& from, NUUID& to){};
+  bool Connect(ParentRef<NNodeBase> from, ParentRef<NNodeBase> ref) {}
 };
 
 class NGraphTemplate : public NGraphBase {
@@ -217,23 +221,23 @@ class NNodePinBase : public INInfo, private Noncopyable {
    * 与えられた関数オブジェクトのコピーを持つ。
    * @warning BindWithRef, BindWithForwardingも
    */
-  void Bind(const CallbackFunction rhs) { Get_val_call = rhs; };
+  inline void Bind(const CallbackFunction rhs) { Get_val_call = rhs; };
 
-  void BindWithRef(const CallbackFunction& rhs) {
+  inline void BindWithRef(const CallbackFunction& rhs) {
     Get_val_call = std::ref(rhs);
   }
 
-  void BindWithForwarding(const CallbackFunction&& rhs) {
+  inline void BindWithForwarding(const CallbackFunction&& rhs) {
     Get_val_call = std::forward<decltype(rhs)>(rhs);
   };
 
   /*!Binds like std::bind(&Hoge::fuga,std::ref(pointer))*/
   template <class T, class F>
-  void Bind(const T& a, const F& boundObject) {
+  inline void Bind(const T& a, const F& boundObject) {
     Get_val_call = std::bind(a, std::ref(boundObject));
   };
 
-  std::optional<Variant> value() {
+  inline std::optional<Variant> value() {
     assert(Get_val_call);
     return Get_val_call();
   }
@@ -273,11 +277,13 @@ class NEventImpl : public NEventBase {
 
 class NNodeEntryPoint : public INInfo, private Noncopyable {
  private:
-  ChildRef<NNodeBase> nextNode;
+  ParentRef<NNodeBase> nextNode;
 
  public:
   explicit NNodeEntryPoint() = default;
   virtual ~NNodeEntryPoint() = default;
+  void SetNextNode(ParentRef<NNodeBase> node) { nextNode = node; };
+  void Start() { nextNode.lock()->Execute(); };
 };
 
 class NNodeEndPoint : public INInfo, private Noncopyable {
@@ -292,12 +298,25 @@ class NSequencer : public NGraphBase {
 
  protected:
  public:
-  explicit NSequencer() = default;
+  explicit NSequencer()
+      : entryPoint(std::make_shared<NNodeEntryPoint>()),
+        endPoint(std::make_shared<NNodeEndPoint>()){};
   virtual ~NSequencer() = default;
 
-  void operator()(){
+  void operator()() { entryPoint->Start(); };
 
-  };
+  void Execute() { entryPoint->Start(); }
+
+  ParentRef<NNodeBase> AddNode() {
+    auto* node = new NNodeBase();
+
+    auto ret = nodes.emplace(node->GetUID(), std::shared_ptr<NNodeBase>(node));
+    // 最初のノードの場合エントリポイントをつなぐ。
+    if (nodes.size() == 1) {
+      entryPoint->SetNextNode(ret.first->second);
+    }
+    return ret.first->second;
+  }
 };
 
 /*!NNodeが持つ値を格納する。*/

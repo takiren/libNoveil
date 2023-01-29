@@ -4,5 +4,7 @@
 
 #pragma once
 
+#include <thread>
+
+#include "NFileIO.h"
 #include "gtest/gtest.h"
-#include"NFileIO.h"
