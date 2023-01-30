@@ -129,8 +129,7 @@ class NNodeBase : public INInfo, private Noncopyable {
   inline int GetPinInputSize() const { return pinInput.size(); }
   inline int GetPinOutputSize() const { return pinOutput.size(); }
 
-  inline void BindToNextNode(
-      ParentRef<NNodeBase> node) {
+  inline void BindToNextNode(ParentRef<NNodeBase> node) {
     this->nextNode = node;
   }
 
@@ -160,7 +159,7 @@ class NNodeTemplate : public NNodeBase {
  *
  */
 
-class NGraphBase : public INInfo, private Noncopyable {
+class NGraphBase : public INInfo{
  private:
  protected:
   hash_map<NUUID, ChildRef<NNodeBase>> nodes;
@@ -168,6 +167,7 @@ class NGraphBase : public INInfo, private Noncopyable {
  public:
   NGraphBase() = default;
   virtual ~NGraphBase() = default;
+
 
   bool Connect(NUUID& from, NUUID& to){};
   bool Connect(ParentRef<NNodeBase> from, ParentRef<NNodeBase> ref) {}
@@ -275,7 +275,7 @@ class NEventImpl : public NEventBase {
   virtual ~NEventImpl() = default;
 };
 
-class NNodeEntryPoint : public INInfo, private Noncopyable {
+class NNodeEntryPoint : public INInfo, public Noncopyable {
  private:
   ParentRef<NNodeBase> nextNode;
 
@@ -286,7 +286,7 @@ class NNodeEntryPoint : public INInfo, private Noncopyable {
   void Start() { nextNode.lock()->Execute(); };
 };
 
-class NNodeEndPoint : public INInfo, private Noncopyable {
+class NNodeEndPoint : public INInfo, public Noncopyable {
  private:
  public:
 };

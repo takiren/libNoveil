@@ -24,13 +24,14 @@ class INInfo : public std::enable_shared_from_this<INInfo> {
   std::string GetName() const { return name; }
 };
 
+
 class Noncopyable {
  protected:
   Noncopyable() = default;
-  virtual ~Noncopyable() = default;
-  Noncopyable(Noncopyable&) = delete;
+  Noncopyable(const Noncopyable&) = delete;
   Noncopyable& operator=(const Noncopyable&) = delete;
 };
+
 
 /*
  * @brief シングルトン用クラス

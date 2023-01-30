@@ -76,6 +76,13 @@ TEST(NNodeTest, BindCopy) {
   EXPECT_EQ(1, node->GetPinOutputRef().size());
 }
 
+TEST(NletTest, nlet1) {
+  nlet<std::string> iv("Hello");
+  auto w = iv.ref();
+  if (auto r = w.borrow())
+    EXPECT_EQ(std::string("Hello"), *r);
+}
+
 TEST(SequencerTest, case1) {
   auto* seq = new NSequencer();
   auto node1 = seq->AddNode();
@@ -84,7 +91,6 @@ TEST(SequencerTest, case1) {
   node1.lock()->SetImplementation(
       [](PackedParentRef<NNodePinBase>, PackedParentRef<NNodePinBase>) {
         std::cout << "node1" << std::endl;
-        _sleep(2000);
         return;
       });
   node2.lock()->SetImplementation(
@@ -98,5 +104,5 @@ TEST(SequencerTest, case1) {
     return;
   });
   std::cout << "FInished." << std::endl;
-  _sleep(4000);
+  EXPECT_EQ(1, 1);
 }
