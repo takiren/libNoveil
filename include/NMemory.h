@@ -2,8 +2,6 @@
 
 #include <map>
 #include <memory>
-
-#include "SDL3/SDL.h"
 namespace noveil {
 
 template <class T>
@@ -103,12 +101,18 @@ class nlet {
     return *this;
   };
 
+
+  T& operator*() const noexcept { return *val; }
+  T* operator->() const noexcept { return val.get(); }
+
   template <class Y>
-  nlet(const nlet<Y>&& rhs) noexcept : val(std::move(rhs.val)) {}
+  nlet( nlet<Y>&& rhs) noexcept : val(std::move(rhs.val)) {}
 
   constexpr nlet() : val(std::make_shared<T>()) {}
+
   template <class... Args>
-  nlet(Args... args) noexcept : val(std::make_shared<T>(args...)) {}
+  nlet(Args&&... args) noexcept
+      : val(std::make_shared<T>(std::forward<Args>(args)...)) {}
 
   static nlet<T> create() { return nlet<T>(); };
 

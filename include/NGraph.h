@@ -14,6 +14,7 @@
 #include <queue>
 #include <thread>
 
+#include "NMemory.h"
 #include "NUtils.h"
 #include "NVariant.h"
 #include "json.hpp"
@@ -45,22 +46,22 @@ class NNodeTemplate;
  * 弱参照
  */
 template <typename T>
-using ParentRef = std::weak_ptr<T>;
+using ParentRef = nref<T>;
 
 template <typename T>
-using PackedParentRef = std::vector<ParentRef<T>>;
+using PackedParentRef = std::vector<nref<T>>;
 
 /*
  * 強参照
  */
 template <typename T>
-using ChildRef = std::shared_ptr<T>;
+using ChildRef = nlet<T>;
 
 template <typename T>
-using PackedChildRef = std::vector<ChildRef<T>>;
+using PackedChildRef = std::vector<nlet<T>>;
 
 /*!次に実行されるノードの弱参照*/
-using NNodeExecutorWeakRef = std::weak_ptr<NNodeExecutor>;
+using NNodeExecutorWeakRef = nref<NNodeExecutor>;
 
 /*
  * ピンのファンクタの型
@@ -81,7 +82,7 @@ class NExecutionImpl {
 };
 
 /**グラフの頂点となる*/
-class NNodeBase : public INInfo, private Noncopyable {
+class NNodeBase : public INInfo {
  private:
   std::function<void(PackedParentRef<NNodePinBase>,
                      PackedParentRef<NNodePinBase>)>
@@ -96,22 +97,34 @@ class NNodeBase : public INInfo, private Noncopyable {
   std::function<void()> executionCall;
 
  public:
-  explicit NNodeBase() : INInfo(){};
+  NNodeBase() : INInfo(){};
   virtual ~NNodeBase() = default;
 
-  inline void AddInputNode(NNodePinBase* inPin) {
-    pinInput.emplace_back(std::shared_ptr<NNodePinBase>(inPin));
+  NNodeBase(const NNodeBase&) = delete;
+
+  NNodeBase(NNodeBase&&) = default;
+  NNodeBase& operator=(const NNodeBase&) = delete;
+  NNodeBase& operator=(NNodeBase&&) = default;
+
+  inline nref<NNodePinBase> AddInputNode() {
+    nlet<NNodePinBase> pin;
+    auto wp = pin.ref();
+    pinInput.emplace_back(std::move(pin));
+    return wp;
   };
 
-  inline void AddOutputNode(NNodePinBase* outPin) {
-    pinOutput.emplace_back(std::shared_ptr<NNodePinBase>(outPin));
+  inline nref<NNodePinBase> AddOutputNode() {
+    nlet<NNodePinBase> pin;
+    auto wp = pin.ref();
+    pinOutput.emplace_back(std::move(pin));
+    return wp;
   };
 
   inline PackedParentRef<NNodePinBase> GetPinInputRef() {
     PackedParentRef<NNodePinBase> ret;
     for (auto it = pinInput.begin(); it != pinInput.end(); ++it) {
       ParentRef<NNodePinBase> p = *it;
-      ret.emplace_back(p);
+      ret.emplace_back(std::move(p));
     }
     return ret;
   };
@@ -120,7 +133,7 @@ class NNodeBase : public INInfo, private Noncopyable {
     PackedParentRef<NNodePinBase> ret;
     for (auto it = pinOutput.begin(); it != pinOutput.end(); ++it) {
       ParentRef<NNodePinBase> p = *it;
-      ret.emplace_back(p);
+      ret.emplace_back(std::move(p));
     }
     return ret;
   };
@@ -141,7 +154,7 @@ class NNodeBase : public INInfo, private Noncopyable {
   template <class... Args>
   inline void Execute(Args... args) {
     this->executor(GetPinInputRef(), GetPinOutputRef(), args...);
-    if (!nextNode.expired()) this->nextNode.lock()->Execute();
+    if (auto r = nextNode.borrow()) r->Execute();
   };
 
   json GetJson(){};
@@ -159,7 +172,7 @@ class NNodeTemplate : public NNodeBase {
  *
  */
 
-class NGraphBase : public INInfo{
+class NGraphBase : public INInfo {
  private:
  protected:
   hash_map<NUUID, ChildRef<NNodeBase>> nodes;
@@ -167,7 +180,6 @@ class NGraphBase : public INInfo{
  public:
   NGraphBase() = default;
   virtual ~NGraphBase() = default;
-
 
   bool Connect(NUUID& from, NUUID& to){};
   bool Connect(ParentRef<NNodeBase> from, ParentRef<NNodeBase> ref) {}
@@ -189,7 +201,7 @@ class NEventBase {
 /**
  * ノードの値入出力に必要なオブジェクト:=ピンの基底クラス。
  */
-class NNodePinBase : public INInfo, private Noncopyable {
+class NNodePinBase : public INInfo {
  private:
   /** std::variantのラッパークラス*/
   Variant mValue;
@@ -213,7 +225,8 @@ class NNodePinBase : public INInfo, private Noncopyable {
   explicit NNodePinBase() : INInfo(){};
   virtual ~NNodePinBase() = default;
 
-  NNodePinBase(NNodePinBase&&) = default;
+  NNodePinBase(const NNodePinBase&) = delete;
+  NNodePinBase& operator=(const NNodePinBase&) = delete;
 
   /*
    * Binds a functor which type is std::function<Variant(void)>.
@@ -283,7 +296,9 @@ class NNodeEntryPoint : public INInfo, public Noncopyable {
   explicit NNodeEntryPoint() = default;
   virtual ~NNodeEntryPoint() = default;
   void SetNextNode(ParentRef<NNodeBase> node) { nextNode = node; };
-  void Start() { nextNode.lock()->Execute(); };
+  void Start() {
+    if (auto r = nextNode.borrow()) r->Execute();
+  };
 };
 
 class NNodeEndPoint : public INInfo, public Noncopyable {
@@ -299,8 +314,7 @@ class NSequencer : public NGraphBase {
  protected:
  public:
   explicit NSequencer()
-      : entryPoint(std::make_shared<NNodeEntryPoint>()),
-        endPoint(std::make_shared<NNodeEndPoint>()){};
+      : entryPoint(nlet<NNodeEntryPoint>()), endPoint(nlet<NNodeEndPoint>()){};
   virtual ~NSequencer() = default;
 
   void operator()() { entryPoint->Start(); };
@@ -308,9 +322,8 @@ class NSequencer : public NGraphBase {
   void Execute() { entryPoint->Start(); }
 
   ParentRef<NNodeBase> AddNode() {
-    auto* node = new NNodeBase();
-
-    auto ret = nodes.emplace(node->GetUID(), std::shared_ptr<NNodeBase>(node));
+    nlet<NNodeBase> node;
+    auto ret = nodes.emplace(node->GetUID(), std::move(node));
     // 最初のノードの場合エントリポイントをつなぐ。
     if (nodes.size() == 1) {
       entryPoint->SetNextNode(ret.first->second);

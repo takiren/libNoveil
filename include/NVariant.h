@@ -2,23 +2,23 @@
 
 #include <cassert>
 #include <map>
-#include <memory>
 #include <optional>
 #include <string>
 #include <unordered_map>
 #include <variant>
 #include <vector>
 
+#include "NMemory.h"
 #include "NUtils.h"
 
 namespace noveil {
 class Variant;
 
-using NVariantRef = std::shared_ptr<Variant>;
+using NVariantRef = nlet<Variant>;
 using PackedVariant = std::vector<Variant>;
 
-template<class T>
-using MappedVariant=std::map<T,Variant>;
+template <class T>
+using MappedVariant = std::map<T, Variant>;
 
 template <typename KEY, typename DATA>
 using hash_map = std::unordered_map<KEY, DATA>;

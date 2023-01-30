@@ -44,60 +44,63 @@ TEST(FuncMapTest, Forwarding2) {
 
 TEST(NNodeTest, BindCopy) {
   auto* node = new NNodeBase();
-  auto* nin = new NNodePinBase();
+  auto nin = node->AddInputNode();
   {
     struct A {
       std::string operator()() { return "This is A."; };
     };
 
     A a;
-    nin->Bind(a);
-    auto str = nin->value();
+    if (auto r = nin.borrow()) {
+      r->Bind(a);
+      auto str = r->value();
+    }
   }
-  auto* nout = new NNodePinBase();
+  auto nout = node->AddOutputNode();
   {
     struct B {
       std::string operator()() { return "This is B."; };
     };
 
     B b;
-    nout->Bind(b);
+    if (auto r = nout.borrow()) r->Bind(b);
   }
-  EXPECT_EQ("This is A.", nin->value().value().Get<std::string>());
-  EXPECT_EQ("This is B.", nout->value().value().Get<std::string>());
+  EXPECT_EQ("This is A.", nin.borrow()->value().value().Get<std::string>());
+  EXPECT_EQ("This is B.", nout.borrow()->value().value().Get<std::string>());
 
-  {
-    node->AddInputNode(nin);
-    node->AddOutputNode(nout);
-    node->AddInputNode(new NNodePinBase());
-  }
+  { node->AddInputNode(); }
 
   EXPECT_EQ(2, node->GetPinInputRef().size());
   EXPECT_EQ(1, node->GetPinOutputRef().size());
 }
 
 TEST(NletTest, nlet1) {
-  nlet<std::string> iv("Hello");
+  std::string hh("hello");
+  nlet<std::string> iv(hh);
   auto w = iv.ref();
-  if (auto r = w.borrow())
-    EXPECT_EQ(std::string("Hello"), *r);
+  if (auto r = w.borrow()) EXPECT_EQ(std::string("hello"), *r);
 }
 
 TEST(SequencerTest, case1) {
   auto* seq = new NSequencer();
   auto node1 = seq->AddNode();
   auto node2 = seq->AddNode();
-  node1.lock()->BindToNextNode(node2);
-  node1.lock()->SetImplementation(
-      [](PackedParentRef<NNodePinBase>, PackedParentRef<NNodePinBase>) {
-        std::cout << "node1" << std::endl;
-        return;
-      });
-  node2.lock()->SetImplementation(
-      [](PackedParentRef<NNodePinBase>, PackedParentRef<NNodePinBase>) {
-        std::cout << "node2" << std::endl;
-        return;
-      });
+  if (auto r = node1.borrow()) {
+    r->BindToNextNode(node2);
+    r->SetImplementation(
+        [](PackedParentRef<NNodePinBase>, PackedParentRef<NNodePinBase>) {
+          std::cout << "node1" << std::endl;
+          return;
+        });
+  }
+
+  if (auto r = node2.borrow()) {
+    r->SetImplementation(
+        [](PackedParentRef<NNodePinBase>, PackedParentRef<NNodePinBase>) {
+          std::cout << "node2" << std::endl;
+          return;
+        });
+  }
 
   std::thread th([&]() {
     seq->Execute();
